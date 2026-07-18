@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-16T00:00:00Z",
+  "title": "Design System: RemeLearning",
+  "extensions": {
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Focused Blue", "canonical": "#1D4ED8", "tonalRamp": ["#0B1220", "#0F1F3D", "#16336B", "#1D4ED8", "#3B82F6", "#93C5FD", "#DBEAFE", "#F4F8FC"] },
+      "secondary": { "role": "secondary", "displayName": "Pale Sky", "canonical": "#DBEAFE", "tonalRamp": ["#0B1220", "#1E3A8A", "#2563EB", "#60A5FA", "#93C5FD", "#BFDBFE", "#DBEAFE", "#EFF6FF"] },
+      "accent-warm": { "role": "tertiary", "displayName": "Ember Orange", "canonical": "#C2410C", "tonalRamp": ["#431407", "#7C2D12", "#9A3412", "#C2410C", "#EA580C", "#FB923C", "#FDBA74", "#FFF7ED"] },
+      "background": { "role": "neutral", "displayName": "Frost Blue", "canonical": "#F4F8FC" },
+      "foreground": { "role": "neutral", "displayName": "Deep Ink Navy", "canonical": "#101B2D" },
+      "muted-foreground": { "role": "neutral", "displayName": "Muted Mist Ink", "canonical": "#56708A" },
+      "sidebar": { "role": "neutral", "displayName": "Deep Study Navy", "canonical": "#1E3A8A" }
+    },
+    "typographyMeta": {
+      "heading": { "displayName": "Fredoka Heading", "purpose": "Page titles, card/dialog titles, field legends — anything carrying a *-title data-slot." },
+      "body": { "displayName": "Nunito Body", "purpose": "All prose and UI copy." }
+    },
+    "shadows": [
+      { "name": "shadow-clay", "value": "inset 0 1px 0 color-mix(in oklch, white, transparent 60%), 0 1px 1px color-mix(in oklch, var(--foreground), transparent 92%), 0 4px 10px -4px color-mix(in oklch, var(--primary), transparent 82%), 0 18px 36px -16px color-mix(in oklch, var(--primary), transparent 68%)", "purpose": "Earned glow for the single most important surface on a screen." },
+      { "name": "shadow-clay-warm", "value": "inset 0 1px 0 color-mix(in oklch, white, transparent 60%), 0 1px 1px color-mix(in oklch, var(--foreground), transparent 92%), 0 4px 10px -4px color-mix(in oklch, var(--accent-warm), transparent 78%), 0 18px 36px -16px color-mix(in oklch, var(--accent-warm), transparent 62%)", "purpose": "Celebratory variant, paired with the warm accent only." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default easing for hover/focus/state transitions." }
+    ],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Default action button across the app.",
+      "html": "<button class=\"ds-btn-primary\">Start practice</button>",
+      "css": ".ds-btn-primary { background: #1D4ED8; color: #F4F8FC; padding: 0.5rem 0.625rem; border-radius: 0.5625rem; font-weight: 500; font-size: 0.875rem; border: none; transition: background 0.2s cubic-bezier(0.4,0,0.2,1), transform 0.15s cubic-bezier(0.4,0,0.2,1); } .ds-btn-primary:hover { background: color-mix(in oklch, #1D4ED8, transparent 20%); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(37,99,235,0.5); } .ds-btn-primary:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Warm CTA Button",
+      "kind": "button",
+      "refersTo": "button-warm",
+      "description": "The single celebratory/high-emphasis CTA per screen, using the one warm accent in the system.",
+      "html": "<button class=\"ds-btn-warm\">Claim your streak</button>",
+      "css": ".ds-btn-warm { background: #C2410C; color: #FFF7ED; padding: 0.5rem 0.75rem; border-radius: 0.5625rem; font-weight: 500; font-size: 0.875rem; border: none; box-shadow: 0 4px 10px -4px rgba(194,65,12,0.35), 0 18px 36px -16px rgba(194,65,12,0.3); transition: background 0.2s cubic-bezier(0.4,0,0.2,1); } .ds-btn-warm:hover { background: color-mix(in oklch, #C2410C, transparent 15%); } .ds-btn-warm:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(194,65,12,0.4); }"
+    },
+    {
+      "name": "Weak Point Card",
+      "kind": "card",
+      "refersTo": "card-default",
+      "description": "Signature component: surfaces one recurring mistake with its source evidence.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-title\">Subject-verb agreement</div><div class=\"ds-card-meta\">Seen 4× · last in \"Morning routine\" recording, 2 days ago</div></div>",
+      "css": ".ds-card { background: #FFFFFF; border-radius: 1.15rem; box-shadow: inset 0 1px 0 rgba(255,255,255,0.4); box-shadow: 0 0 0 1px rgba(16,27,45,0.1); padding: 1rem; } .ds-card-title { font-family: 'Fredoka', sans-serif; font-weight: 500; font-size: 1rem; color: #101B2D; letter-spacing: -0.01em; } .ds-card-meta { font-family: 'Nunito Variable', sans-serif; font-size: 0.8rem; color: #56708A; margin-top: 0.25rem; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Standard text field.",
+      "html": "<input class=\"ds-input\" placeholder=\"Enter a value\" />",
+      "css": ".ds-input { height: 2rem; width: 100%; border-radius: 0.5625rem; border: 1px solid #D3E3F3; background: transparent; padding: 0.25rem 0.625rem; font-size: 0.875rem; color: #101B2D; } .ds-input::placeholder { color: #56708A; } .ds-input:focus-visible { outline: none; border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37,99,235,0.5); }"
+    },
+    {
+      "name": "Sidebar Nav Item",
+      "kind": "nav",
+      "refersTo": "sidebar-nav-item",
+      "description": "Active/hover nav item inside the dark Deep Study Navy sidebar.",
+      "html": "<a class=\"ds-nav-item ds-nav-item-active\" href=\"#\">Dashboard</a>",
+      "css": ".ds-nav-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 0.75rem; font-family: 'Nunito Variable', sans-serif; font-size: 0.875rem; color: #DCE8FB; text-decoration: none; transition: background 0.15s cubic-bezier(0.4,0,0.2,1); } .ds-nav-item:hover { background: rgba(255,255,255,0.12); } .ds-nav-item-active { background: rgba(255,255,255,0.12); color: #FFFFFF; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Study Companion",
+    "overview": "RemeLearning is a calm-blue study surface that runs a warm, energetic pulse underneath it — \"Focused Blue\" (the palette's own name in the codebase) carries the credibility and concentration a learner needs to trust what the app tells them about their own mistakes, while the orange accent, motion, and copy carry the encouragement. The two are deliberately split: the base palette earns trust, the accent and motion earn momentum. This system explicitly rejects the generic AI-SaaS dashboard look — no hero-metric tiles, no gradient text, no side-stripe accent borders, no identical icon+heading+text card grids repeated down the page — and it rejects childish gamification (mascots, confetti, badge walls). Energy here reads as responsive and warm, not loud. Every weak point or recommendation the app surfaces is evidence pulled from the learner's own recordings; the interface should always make that traceability visible (which recording, how often, how recently) rather than presenting a recommendation as generic advice.",
+    "keyCharacteristics": [
+      "Calm blue base (background, primary, sidebar) for trust and low cognitive load",
+      "One warm orange accent (accent-warm) reserved for CTAs and celebratory/motivating moments",
+      "Soft, generous corner radii (1.15rem base) — a rounded, approachable geometry",
+      "Flat-plus-glow: nearly flat surfaces, with a soft colored glow (shadow-clay) reserved for elevated, primary elements",
+      "Two-weight type system: Fredoka for headings, Nunito for body"
+    ],
+    "rules": [
+      { "name": "The One Accent Rule", "body": "Ember Orange (accent-warm) appears on at most one element per screen — the single primary CTA or a celebratory state.", "section": "colors" },
+      { "name": "The No-Gray-Text Rule", "body": "Body and label text never drop to a flat neutral gray; muted-foreground is always a tint of the primary hue, kept at >=4.5:1 contrast.", "section": "colors" },
+      { "name": "The Two-Voice Rule", "body": "Only two families exist in this system: Fredoka for headings/titles, Nunito for everything else.", "section": "typography" },
+      { "name": "The Earned Glow Rule", "body": "A card gets shadow-clay only if it's the single most important surface on its screen; everything else stays flat with a hairline ring.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep Ember Orange (#C2410C) to one element per screen.",
+      "Do tint every neutral toward the primary blue hue rather than reaching for flat gray.",
+      "Do reserve shadow-clay for the single most important surface per screen.",
+      "Do ground every weak-point/recommendation card in traceable evidence.",
+      "Do carry energy through motion, copy, and the warm accent — not by widening the base palette's saturation."
+    ],
+    "donts": [
+      "Don't use hero-metric-card templates, gradient text, or side-stripe colored borders.",
+      "Don't repeat the identical icon+heading+text card grid across sections.",
+      "Don't add tiny uppercase eyebrows above every section.",
+      "Don't introduce mascots, confetti, or badge-wall gamification.",
+      "Don't drop body or label text to flat gray.",
+      "Don't add a third font family for emphasis."
+    ]
+  }
+}
