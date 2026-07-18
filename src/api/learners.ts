@@ -5,8 +5,11 @@ import type {
   DictationAttemptRequest,
   DictationAttemptResult,
   DictationClip,
+  DictationClipDetail,
   DictationFacets,
+  DictationFolder,
   DictationHistoryEntry,
+  DictationLessonSummary,
   DictationPracticeItem,
   LearnerOverview,
   PracticeRedoRequest,
@@ -79,6 +82,36 @@ export async function getDictationClips(
   const { data } = await apiClient.get<ApiResponse<DictationClip[]>>(
     `/learners/${userId}/dictation/clips`,
     { params: filters }
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/dictation/folders - browsable topic folders.
+export async function getDictationFolders(userId: string): Promise<DictationFolder[]> {
+  const { data } = await apiClient.get<ApiResponse<DictationFolder[]>>(
+    `/learners/${userId}/dictation/folders`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/dictation/folders/{folderId}/lessons - lessons in one folder.
+export async function getDictationFolderLessons(
+  userId: string,
+  folderId: string
+): Promise<DictationLessonSummary[]> {
+  const { data } = await apiClient.get<ApiResponse<DictationLessonSummary[]>>(
+    `/learners/${userId}/dictation/folders/${folderId}/lessons`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/dictation/clips/{clipId} - full clip detail (script + sentences).
+export async function getDictationClip(
+  userId: string,
+  clipId: number
+): Promise<DictationClipDetail> {
+  const { data } = await apiClient.get<ApiResponse<DictationClipDetail>>(
+    `/learners/${userId}/dictation/clips/${clipId}`
   )
   return unwrap(data)
 }

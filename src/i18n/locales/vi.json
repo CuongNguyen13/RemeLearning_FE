@@ -205,7 +205,26 @@
     "aiError": "Không thể tạo bài luyện AI",
     "aiBadge": "Luyện tập AI",
     "goToLibrary": "Sang thư viện",
-    "historyEmpty": "Chưa có lần luyện nào - hãy bắt đầu một phiên chép chính tả."
+    "historyEmpty": "Chưa có lần luyện nào - hãy bắt đầu một phiên chép chính tả.",
+    "folders": {
+      "title": "Chọn chủ đề",
+      "lessonCount": "{{count}} bài",
+      "empty": "Chưa có chủ đề nào"
+    },
+    "lessons": {
+      "back": "Quay lại chủ đề",
+      "empty": "Chủ đề này chưa có bài nào"
+    },
+    "result": {
+      "nextLesson": "Bài tiếp theo",
+      "backToLessons": "Về danh sách bài"
+    },
+    "sentenceProgress": "Câu {{current}}/{{total}}",
+    "listenSentence": "Nghe câu này",
+    "nextSentence": "Câu tiếp theo",
+    "hint": "Gợi ý",
+    "hintLocked": "Nghe thêm {{count}} lần nữa để mở gợi ý",
+    "sentenceCorrect": "Chính xác!"
   },
   "profile": {
     "title": "Hồ sơ",

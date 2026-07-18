@@ -115,6 +115,40 @@ export interface DictationFacets {
   levels: string[]
   topics: string[]
   examTypes: string[]
+  minListensForHint: number
+}
+
+/** One browsable dictation topic (folder), listed on the library home screen. */
+export interface DictationFolder {
+  folderId: string
+  name: string
+  lessonCount: number
+}
+
+/** One lesson inside a folder — lightweight, no script/sentences yet. */
+export interface DictationLessonSummary {
+  clipId: number
+  code: string
+  title: string
+  audioUrl: string
+}
+
+/** One sentence of a clip's script, with optional AI-aligned audio timestamps. */
+export interface DictationSentence {
+  index: number
+  text: string
+  startMs: number | null
+  endMs: number | null
+}
+
+/** Full detail of a single clip opened for sentence-by-sentence practice. */
+export interface DictationClipDetail {
+  clipId: number
+  code: string
+  title: string
+  audioUrl: string
+  scriptText: string
+  sentences: DictationSentence[]
 }
 
 /** One library clip to listen to and transcribe. Has no script text so the answer isn't leaked. */

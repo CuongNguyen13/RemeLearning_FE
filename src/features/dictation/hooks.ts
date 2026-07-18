@@ -2,7 +2,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   generateAiPractice,
   getAiPractice,
+  getDictationClip,
   getDictationFacets,
+  getDictationFolderLessons,
+  getDictationFolders,
   getDictationHistory,
   startDictationSession,
   submitDictationAttempt,
@@ -14,6 +17,30 @@ export function useDictationFacets(userId: string) {
     queryKey: ["learner", userId, "dictation", "facets"],
     queryFn: () => getDictationFacets(userId),
     enabled: !!userId,
+  })
+}
+
+export function useDictationFolders(userId: string) {
+  return useQuery({
+    queryKey: ["learner", userId, "dictation", "folders"],
+    queryFn: () => getDictationFolders(userId),
+    enabled: !!userId,
+  })
+}
+
+export function useDictationFolderLessons(userId: string, folderId: string | null) {
+  return useQuery({
+    queryKey: ["learner", userId, "dictation", "folders", folderId, "lessons"],
+    queryFn: () => getDictationFolderLessons(userId, folderId as string),
+    enabled: !!userId && !!folderId,
+  })
+}
+
+export function useDictationClip(userId: string, clipId: number | null) {
+  return useQuery({
+    queryKey: ["learner", userId, "dictation", "clips", clipId],
+    queryFn: () => getDictationClip(userId, clipId as number),
+    enabled: !!userId && !!clipId,
   })
 }
 

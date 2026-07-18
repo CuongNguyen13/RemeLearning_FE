@@ -205,7 +205,26 @@
     "aiError": "Failed to generate AI practice",
     "aiBadge": "AI practice",
     "goToLibrary": "Go to Library",
-    "historyEmpty": "No attempts yet - start a dictation session."
+    "historyEmpty": "No attempts yet - start a dictation session.",
+    "folders": {
+      "title": "Choose a topic",
+      "lessonCount": "{{count}} lessons",
+      "empty": "No topics yet"
+    },
+    "lessons": {
+      "back": "Back to topics",
+      "empty": "This topic has no lessons yet"
+    },
+    "result": {
+      "nextLesson": "Next lesson",
+      "backToLessons": "Back to lesson list"
+    },
+    "sentenceProgress": "Sentence {{current}}/{{total}}",
+    "listenSentence": "Listen to this sentence",
+    "nextSentence": "Next sentence",
+    "hint": "Hint",
+    "hintLocked": "Listen {{count}} more time(s) to unlock the hint",
+    "sentenceCorrect": "Correct!"
   },
   "profile": {
     "title": "Profile",

@@ -1,37 +1,33 @@
-import { Check, Headphones, Mic, PartyPopper, Sparkles, Wand2 } from "lucide-react"
+import { Check, ChevronLeft, Folder, Headphones, Mic, Sparkles, Wand2 } from "lucide-react"
 import { motion, useReducedMotion } from "motion/react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { EmptyState } from "@/components/EmptyState"
+import { ErrorState } from "@/components/ErrorState"
 import { RevealGroup, RevealItem } from "@/components/Reveal"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { dictationClipAudioUrl, dictationPracticeAudioUrl } from "@/api/learners"
+import { AttemptResultPanel } from "@/features/dictation/AttemptResultPanel"
 import {
   useAiPractice,
+  useDictationClip,
   useDictationFacets,
+  useDictationFolderLessons,
+  useDictationFolders,
   useDictationHistory,
   useGenerateAiPractice,
-  useStartDictationSession,
   useSubmitDictationAttempt,
 } from "@/features/dictation/hooks"
+import { SentenceDictationRunner } from "@/features/dictation/SentenceDictationRunner"
 import { ApiError } from "@/lib/http"
 import { cn } from "@/lib/utils"
 import { useAuthStore } from "@/stores/auth-store"
-import type { DictationAttemptResult, DictationClip } from "@/types/api"
+import type { DictationAttemptResult, DictationLessonSummary } from "@/types/api"
 
-const ANY = "all"
 // Quint ease-out: fast start, gentle settle - matches the practice flow's motion, no bounce/elastic.
 const EASE_OUT = [0.22, 1, 0.36, 1] as const
 
@@ -68,64 +64,56 @@ export function DictationPage() {
   )
 }
 
-// --- Library section: browse by facets, dictate each real-audio clip ---
+// --- Library section: browse folders -> lessons -> sentence-by-sentence runner -> result ---
+
+type LibraryView = "folders" | "lessons" | "runner" | "result"
 
 function LibrarySection({ userId }: { userId: string }) {
   const { t } = useTranslation()
   const { data: facets } = useDictationFacets(userId)
-  const startSession = useStartDictationSession(userId)
   const submitAttempt = useSubmitDictationAttempt(userId)
-  const reduceMotion = useReducedMotion()
 
-  const [filters, setFilters] = useState<Record<string, string>>({})
-  const [clips, setClips] = useState<DictationClip[] | null>(null)
-  const [index, setIndex] = useState(0)
-  const [transcript, setTranscript] = useState("")
+  const [view, setView] = useState<LibraryView>("folders")
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null)
+  const [selectedClipId, setSelectedClipId] = useState<number | null>(null)
   const [result, setResult] = useState<DictationAttemptResult | null>(null)
-  const [accuracies, setAccuracies] = useState<number[]>([])
 
-  const current = clips?.[index]
-  const finished = !!clips && clips.length > 0 && index >= clips.length
+  const {
+    data: folders,
+    isLoading: foldersLoading,
+    isError: foldersError,
+    refetch: refetchFolders,
+  } = useDictationFolders(userId)
+  const {
+    data: lessons,
+    isLoading: lessonsLoading,
+    isError: lessonsError,
+    refetch: refetchLessons,
+  } = useDictationFolderLessons(userId, selectedFolderId)
+  const { data: clip, isError: clipError, refetch: refetchClip } = useDictationClip(
+    userId,
+    selectedClipId
+  )
 
-  function setFilter(key: string, value: string) {
-    setFilters((prev) => ({ ...prev, [key]: value }))
+  function openFolder(folderId: string) {
+    setSelectedFolderId(folderId)
+    setView("lessons")
   }
 
-  function toParam(key: string): string | undefined {
-    return filters[key] && filters[key] !== ANY ? filters[key] : undefined
+  function openLesson(clipId: number) {
+    setSelectedClipId(clipId)
+    setResult(null)
+    setView("runner")
   }
 
-  function handleStart() {
-    startSession.mutate(
-      {
-        skill: toParam("skill"),
-        level: toParam("level"),
-        topic: toParam("topic"),
-        examType: toParam("examType"),
-        count: 5,
-      },
-      {
-        onSuccess: (data) => {
-          setClips(data)
-          setIndex(0)
-          setResult(null)
-          setTranscript("")
-          setAccuracies([])
-        },
-        onError: (error) =>
-          toast.error(error instanceof ApiError ? error.message : t("dictation.startError")),
-      }
-    )
-  }
-
-  function handleCheck() {
-    if (!current || !transcript.trim()) return
+  function handleRunnerComplete(fullTranscript: string) {
+    if (selectedClipId == null) return
     submitAttempt.mutate(
-      { clipId: current.clipId, userTranscript: transcript },
+      { clipId: selectedClipId, userTranscript: fullTranscript },
       {
         onSuccess: (data) => {
           setResult(data)
-          setAccuracies((prev) => [...prev, data.accuracy])
+          setView("result")
         },
         onError: (error) =>
           toast.error(error instanceof ApiError ? error.message : t("dictation.checkError")),
@@ -133,115 +121,121 @@ function LibrarySection({ userId }: { userId: string }) {
     )
   }
 
-  function handleNext() {
-    setIndex((i) => i + 1)
-    setResult(null)
-    setTranscript("")
+  function goToNextLesson() {
+    const currentIndex = (lessons ?? []).findIndex((lesson) => lesson.clipId === selectedClipId)
+    const nextLesson = currentIndex >= 0 ? lessons?.[currentIndex + 1] : undefined
+    if (nextLesson) {
+      openLesson(nextLesson.clipId)
+    } else {
+      setView("lessons")
+    }
   }
 
-  function handleRestart() {
-    setClips(null)
-    setIndex(0)
-    setResult(null)
-    setTranscript("")
-    setAccuracies([])
-  }
-
-  const averageAccuracy =
-    accuracies.length > 0
-      ? Math.round((accuracies.reduce((sum, a) => sum + a, 0) / accuracies.length) * 100)
-      : 0
-
-  if (!clips) {
+  if (view === "folders") {
+    if (foldersError) {
+      return <ErrorState onRetry={() => void refetchFolders()} />
+    }
+    if (!foldersLoading && (!folders || folders.length === 0)) {
+      return <EmptyState icon={<Folder className="size-6" />} title={t("dictation.folders.empty")} />
+    }
     return (
-      <div className="flex w-full max-w-md flex-col gap-5 rounded-3xl bg-card p-6 shadow-clay">
-        <FacetSelect
-          label={t("dictation.filterExam")}
-          value={filters.examType ?? ANY}
-          options={facets?.examTypes ?? []}
-          onChange={(v) => setFilter("examType", v)}
-        />
-        <FacetSelect
-          label={t("dictation.filterSkill")}
-          value={filters.skill ?? ANY}
-          options={facets?.skills ?? []}
-          onChange={(v) => setFilter("skill", v)}
-        />
-        <FacetSelect
-          label={t("dictation.filterLevel")}
-          value={filters.level ?? ANY}
-          options={facets?.levels ?? []}
-          onChange={(v) => setFilter("level", v)}
-        />
-        <FacetSelect
-          label={t("dictation.filterTopic")}
-          value={filters.topic ?? ANY}
-          options={facets?.topics ?? []}
-          onChange={(v) => setFilter("topic", v)}
-        />
-        <Button className="h-11" disabled={startSession.isPending} onClick={handleStart}>
-          <Headphones /> {startSession.isPending ? t("common.loading") : t("dictation.start")}
+      <div className="flex flex-col gap-3">
+        <h2 className="text-lg font-medium">{t("dictation.folders.title")}</h2>
+        <RevealGroup className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {(folders ?? []).map((folder) => (
+            <RevealItem key={folder.folderId}>
+              <button
+                type="button"
+                onClick={() => openFolder(folder.folderId)}
+                className="flex w-full flex-col gap-2 rounded-2xl bg-card p-5 text-left shadow-clay transition hover:shadow-clay-warm"
+              >
+                <Folder className="size-5 text-accent-warm" />
+                <p className="font-medium">{folder.name}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("dictation.folders.lessonCount", { count: folder.lessonCount })}
+                </p>
+              </button>
+            </RevealItem>
+          ))}
+        </RevealGroup>
+      </div>
+    )
+  }
+
+  if (view === "lessons") {
+    const currentFolder = folders?.find((folder) => folder.folderId === selectedFolderId)
+    return (
+      <div className="flex flex-col gap-3">
+        <Button variant="ghost" className="h-9 w-fit" onClick={() => setView("folders")}>
+          <ChevronLeft /> {t("dictation.lessons.back")}
         </Button>
+        <h2 className="text-lg font-medium">{currentFolder?.name}</h2>
+        {lessonsError ? (
+          <ErrorState onRetry={() => void refetchLessons()} />
+        ) : !lessonsLoading && (!lessons || lessons.length === 0) ? (
+          <EmptyState icon={<Headphones className="size-6" />} title={t("dictation.lessons.empty")} />
+        ) : (
+          <RevealGroup className="flex flex-col gap-2">
+            {(lessons ?? []).map((lesson) => (
+              <RevealItem key={lesson.clipId}>
+                <LessonRow lesson={lesson} onClick={() => openLesson(lesson.clipId)} />
+              </RevealItem>
+            ))}
+          </RevealGroup>
+        )}
       </div>
     )
   }
 
-  if (clips.length === 0) {
+  if (view === "runner") {
+    if (clipError) {
+      return <ErrorState onRetry={() => void refetchClip()} />
+    }
+    if (!clip) return null
     return (
-      <EmptyState
-        icon={<Headphones className="size-6" />}
-        title={t("dictation.empty")}
-        description={t("dictation.adjustFiltersHint")}
-        action={
-          <Button variant="outline" className="h-11" onClick={handleRestart}>
-            {t("dictation.adjustFilters")}
-          </Button>
-        }
+      <SentenceDictationRunner
+        clip={clip}
+        audioSrc={dictationClipAudioUrl(userId, clip.clipId)}
+        minListensForHint={facets?.minListensForHint ?? 1}
+        onComplete={handleRunnerComplete}
       />
     )
   }
 
-  if (finished) {
+  if (view === "result" && result) {
+    const currentIndex = (lessons ?? []).findIndex((lesson) => lesson.clipId === selectedClipId)
+    const hasNext = currentIndex >= 0 && currentIndex + 1 < (lessons ?? []).length
     return (
-      <SessionSummary
-        averageAccuracy={averageAccuracy}
-        onRestart={handleRestart}
-        reduceMotion={!!reduceMotion}
+      <AttemptResultPanel
+        result={result}
+        onNextLesson={hasNext ? goToNextLesson : undefined}
+        onBackToLessons={() => setView("lessons")}
       />
     )
   }
 
+  return null
+}
+
+function LessonRow({
+  lesson,
+  onClick,
+}: {
+  lesson: DictationLessonSummary
+  onClick: () => void
+}) {
   return (
-    <div className="flex w-full max-w-md flex-col gap-5">
-      <div>
-        <Progress value={(index / clips.length) * 100} />
-        <p className="mt-2 text-center text-sm font-medium text-muted-foreground">
-          {t("dictation.progress", { current: index + 1, total: clips.length })}
-        </p>
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex w-full items-center justify-between rounded-2xl bg-card p-4 text-left shadow-clay transition hover:shadow-clay-warm"
+    >
+      <div className="flex flex-col gap-1">
+        <p className="font-medium">{lesson.title}</p>
+        <p className="text-xs text-muted-foreground">{lesson.code}</p>
       </div>
-
-      {current && (
-        <motion.div
-          key={current.clipId}
-          initial={{ opacity: 0, x: reduceMotion ? 0 : 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.3, ease: EASE_OUT }}
-        >
-          <RunnerCard
-            audioSrc={dictationClipAudioUrl(userId, current.clipId)}
-            audioKey={`clip-${current.clipId}`}
-            badge={[current.examType, current.level, current.skill].filter(Boolean).join(" · ")}
-            transcript={transcript}
-            setTranscript={setTranscript}
-            result={result}
-            isChecking={submitAttempt.isPending}
-            isLast={index + 1 >= clips.length}
-            onCheck={handleCheck}
-            onNext={handleNext}
-          />
-        </motion.div>
-      )}
-    </div>
+      <Headphones className="size-4 shrink-0 text-muted-foreground" />
+    </button>
   )
 }
 
@@ -494,88 +488,6 @@ function AiSuggestions({ suggestions }: { suggestions: string[] }) {
           <li key={i}>{suggestion}</li>
         ))}
       </ul>
-    </div>
-  )
-}
-
-function SessionSummary({
-  averageAccuracy,
-  onRestart,
-  reduceMotion,
-}: {
-  averageAccuracy: number
-  onRestart: () => void
-  reduceMotion: boolean
-}) {
-  const { t } = useTranslation()
-  const perfectRun = averageAccuracy >= 90
-
-  return (
-    <motion.div
-      role="status"
-      aria-live="polite"
-      initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: reduceMotion ? 0 : 0.3, ease: EASE_OUT }}
-      className="flex w-full max-w-md flex-col items-center gap-4 rounded-3xl bg-card p-8 text-center shadow-clay"
-    >
-      <motion.div
-        initial={{ scale: reduceMotion ? 1 : 0.7, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{
-          duration: reduceMotion ? 0 : 0.35,
-          ease: EASE_OUT,
-          delay: reduceMotion ? 0 : 0.1,
-        }}
-      >
-        <PartyPopper className="size-10 text-accent-warm" />
-      </motion.div>
-      <p className="font-heading text-2xl font-medium">{t("dictation.allDone")}</p>
-      <p className="text-muted-foreground">
-        {t("dictation.resultsSummary", { accuracy: averageAccuracy })}
-      </p>
-      {perfectRun && (
-        <p className="text-sm font-medium text-accent-warm">{t("dictation.perfectRun")}</p>
-      )}
-      <Button
-        size="lg"
-        onClick={onRestart}
-        className="mt-2 h-11 bg-accent-warm text-accent-warm-foreground shadow-clay-warm hover:bg-accent-warm/90"
-      >
-        {t("dictation.practiceAgain")}
-      </Button>
-    </motion.div>
-  )
-}
-
-function FacetSelect({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string
-  value: string
-  options: string[]
-  onChange: (value: string) => void
-}) {
-  const { t } = useTranslation()
-  return (
-    <div className="flex flex-col gap-2">
-      <p className="text-sm font-medium">{label}</p>
-      <Select value={value} onValueChange={(next) => onChange(next ?? ANY)}>
-        <SelectTrigger className="h-11 w-full" aria-label={label}>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value={ANY}>{t("dictation.filterAll")}</SelectItem>
-          {options.map((option) => (
-            <SelectItem key={option} value={option}>
-              {option}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
     </div>
   )
 }
