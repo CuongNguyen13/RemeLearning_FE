@@ -2,6 +2,7 @@ import { apiBaseUrl, apiClient } from "@/lib/api-client"
 import { unwrap } from "@/lib/http"
 import type {
   ApiResponse,
+  DictationAttemptDetail,
   DictationAttemptRequest,
   DictationAttemptResult,
   DictationClip,
@@ -11,6 +12,8 @@ import type {
   DictationHistoryEntry,
   DictationLessonSummary,
   DictationPracticeItem,
+  DictationPracticeItemDetail,
+  GenerateAiPracticeRequest,
   LearnerOverview,
   PracticeRedoRequest,
   RecommendationsByCategory,
@@ -105,13 +108,17 @@ export async function getDictationFolderLessons(
   return unwrap(data)
 }
 
-// GET /api/v1/learners/{userId}/dictation/clips/{clipId} - full clip detail (script + sentences).
+// GET /api/v1/learners/{userId}/dictation/clips/{clipId} - full clip detail (script + sentences),
+// optionally with a per-sentence translation to translationLang (only "vi" ever returns one - the
+// content is always English, so translating to "en" would be a no-op and is skipped server-side).
 export async function getDictationClip(
   userId: string,
-  clipId: number
+  clipId: number,
+  translationLang?: string
 ): Promise<DictationClipDetail> {
   const { data } = await apiClient.get<ApiResponse<DictationClipDetail>>(
-    `/learners/${userId}/dictation/clips/${clipId}`
+    `/learners/${userId}/dictation/clips/${clipId}`,
+    { params: translationLang ? { translationLang } : undefined }
   )
   return unwrap(data)
 }
@@ -148,6 +155,32 @@ export async function getDictationHistory(userId: string): Promise<DictationHist
   return unwrap(data)
 }
 
+// GET /api/v1/learners/{userId}/dictation/history/{attemptId} - full detail for one past attempt.
+export async function getDictationAttemptDetail(
+  userId: string,
+  attemptId: number
+): Promise<DictationAttemptDetail> {
+  const { data } = await apiClient.get<ApiResponse<DictationAttemptDetail>>(
+    `/learners/${userId}/dictation/history/${attemptId}`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/dictation/history/{attemptId}/ai-practice - generate one AI-practice
+// dialogue/passage targeted at one specific past attempt's mistakes.
+export async function generateAiPracticeFromAttempt(
+  userId: string,
+  attemptId: number,
+  translationLang?: string
+): Promise<DictationPracticeItem[]> {
+  const { data } = await apiClient.post<ApiResponse<DictationPracticeItem[]>>(
+    `/learners/${userId}/dictation/history/${attemptId}/ai-practice`,
+    undefined,
+    { params: translationLang ? { translationLang } : undefined }
+  )
+  return unwrap(data)
+}
+
 // GET /api/v1/learners/{userId}/dictation/ai-practice - the learner's AI-practice items.
 export async function getAiPractice(userId: string): Promise<DictationPracticeItem[]> {
   const { data } = await apiClient.get<ApiResponse<DictationPracticeItem[]>>(
@@ -156,10 +189,28 @@ export async function getAiPractice(userId: string): Promise<DictationPracticeIt
   return unwrap(data)
 }
 
-// POST /api/v1/learners/{userId}/dictation/ai-practice/generate - synthesize AI-practice audio.
-export async function generateAiPractice(userId: string): Promise<DictationPracticeItem[]> {
+// POST /api/v1/learners/{userId}/dictation/ai-practice/generate - synthesize one new AI-practice
+// passage honoring the requested level/examType facets (concrete value, "RANDOM", or omitted) and
+// translation language.
+export async function generateAiPractice(
+  userId: string,
+  request: GenerateAiPracticeRequest
+): Promise<DictationPracticeItem[]> {
   const { data } = await apiClient.post<ApiResponse<DictationPracticeItem[]>>(
-    `/learners/${userId}/dictation/ai-practice/generate`
+    `/learners/${userId}/dictation/ai-practice/generate`,
+    request
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/dictation/ai-practice/items/{practiceItemId}/detail - passage split
+// into sentences, for sentence-by-sentence AI-practice runs (mirrors getDictationClip).
+export async function getAiPracticeDetail(
+  userId: string,
+  practiceItemId: number
+): Promise<DictationPracticeItemDetail> {
+  const { data } = await apiClient.get<ApiResponse<DictationPracticeItemDetail>>(
+    `/learners/${userId}/dictation/ai-practice/items/${practiceItemId}/detail`
   )
   return unwrap(data)
 }

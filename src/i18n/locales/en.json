@@ -29,9 +29,7 @@
     "practice": "Practice",
     "dictation": "Dictation",
     "profile": "Profile",
-    "groupOverview": "Overview",
-    "groupLearn": "Learn",
-    "groupAccount": "Account",
+    "groupPractice": "Sharpen",
     "primaryNavigation": "Primary navigation",
     "openMenu": "Open menu",
     "closeMenu": "Close menu"
@@ -84,7 +82,7 @@
     "practiceCalloutCta": "Continue practice",
     "analysisPending": "Your recordings are being analyzed - weak points will show up here soon.",
     "recommendationMeta": "{{score}}% forgetting score · {{time}}",
-    "recordingLabel": "Recording {{id}}"
+    "recordingLabel": "{{id}}"
   },
   "recordings": {
     "title": "Recordings",
@@ -201,11 +199,26 @@
     "aiIntro": "AI turns the words you keep missing into new sentences, voiced by Supertonic, so you can practise hearing them again.",
     "aiGenerate": "Generate practice",
     "aiGenerating": "Generating...",
+    "aiGenerateDialog": {
+      "title": "Create practice",
+      "levelLabel": "Level",
+      "examTypeLabel": "Exam type",
+      "random": "Random",
+      "noPreference": "No preference (AI picks)",
+      "submit": "Create practice"
+    },
     "aiEmpty": "No AI practice yet - do some dictation first, then generate practice from your misses.",
     "aiError": "Failed to generate AI practice",
     "aiBadge": "AI practice",
+    "aiPracticeItemTitle": "AI passage {{index}}",
+    "libraryBadge": "Library",
     "goToLibrary": "Go to Library",
     "historyEmpty": "No attempts yet - start a dictation session.",
+    "historyDetail": {
+      "referenceText": "Reference text",
+      "yourTranscript": "What you typed",
+      "mistakes": "Words you got wrong"
+    },
     "folders": {
       "title": "Choose a topic",
       "lessonCount": "{{count}} lessons",
@@ -215,16 +228,33 @@
       "back": "Back to topics",
       "empty": "This topic has no lessons yet"
     },
+    "panel": {
+      "selectLesson": "Pick a lesson to start",
+      "selectLessonHint": "Choose a topic on the left, then pick a lesson to dictate.",
+      "selectLessonWelcome": "Welcome back -\npick a lesson on the left and start listening."
+    },
     "result": {
       "nextLesson": "Next lesson",
       "backToLessons": "Back to lesson list"
     },
     "sentenceProgress": "Sentence {{current}}/{{total}}",
     "listenSentence": "Listen to this sentence",
+    "listeningNow": "Now playing...",
+    "audioLoading": "Loading audio...",
+    "audioLoadError": "Couldn't load audio",
+    "listenShortcutHint": "Tip: press Ctrl to replay this sentence",
     "nextSentence": "Next sentence",
     "hint": "Hint",
+    "hintHide": "Hide hint",
+    "translationLabel": "Translation",
     "hintLocked": "Listen {{count}} more time(s) to unlock the hint",
-    "sentenceCorrect": "Correct!"
+    "lessonAttemptCount": "Practiced {{count}}×",
+    "sentenceCorrect": "Correct!",
+    "sentenceIncorrect": "Not quite - fix it and check again",
+    "submitting": "Grading your attempt...",
+    "submitError": "Couldn't grade this attempt",
+    "goToAi": "Practice with AI",
+    "historyRedo": "Redo"
   },
   "profile": {
     "title": "Profile",

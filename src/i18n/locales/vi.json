@@ -29,9 +29,7 @@
     "practice": "Luyện tập",
     "dictation": "Nghe chép chính tả",
     "profile": "Hồ sơ",
-    "groupOverview": "Chính",
-    "groupLearn": "Học tập",
-    "groupAccount": "Tài khoản",
+    "groupPractice": "Rèn luyện",
     "primaryNavigation": "Điều hướng chính",
     "openMenu": "Mở menu",
     "closeMenu": "Đóng menu"
@@ -84,7 +82,7 @@
     "practiceCalloutCta": "Tiếp tục luyện tập",
     "analysisPending": "Bản ghi âm của bạn đang được phân tích - điểm yếu sẽ xuất hiện ở đây sớm thôi.",
     "recommendationMeta": "{{score}}% điểm quên · {{time}}",
-    "recordingLabel": "Bản ghi {{id}}"
+    "recordingLabel": "{{id}}"
   },
   "recordings": {
     "title": "Bản ghi âm",
@@ -201,11 +199,26 @@
     "aiIntro": "AI biến những từ bạn hay nghe sai thành câu mới, đọc bằng Supertonic, để bạn luyện nghe lại đúng những chỗ đó.",
     "aiGenerate": "Tạo bài luyện",
     "aiGenerating": "Đang tạo...",
+    "aiGenerateDialog": {
+      "title": "Tạo bài luyện",
+      "levelLabel": "Trình độ",
+      "examTypeLabel": "Dạng đề",
+      "random": "Ngẫu nhiên",
+      "noPreference": "Không chọn (AI tự chọn)",
+      "submit": "Tạo bài luyện"
+    },
     "aiEmpty": "Chưa có bài luyện AI - hãy chép chính tả trước, rồi tạo bài luyện từ những chỗ bạn nghe sai.",
     "aiError": "Không thể tạo bài luyện AI",
     "aiBadge": "Luyện tập AI",
+    "aiPracticeItemTitle": "Bài luyện AI {{index}}",
+    "libraryBadge": "Thư viện",
     "goToLibrary": "Sang thư viện",
     "historyEmpty": "Chưa có lần luyện nào - hãy bắt đầu một phiên chép chính tả.",
+    "historyDetail": {
+      "referenceText": "Nội dung gốc",
+      "yourTranscript": "Bài bạn đã gõ",
+      "mistakes": "Những từ bạn gõ sai"
+    },
     "folders": {
       "title": "Chọn chủ đề",
       "lessonCount": "{{count}} bài",
@@ -215,16 +228,33 @@
       "back": "Quay lại chủ đề",
       "empty": "Chủ đề này chưa có bài nào"
     },
+    "panel": {
+      "selectLesson": "Chọn một bài để bắt đầu",
+      "selectLessonHint": "Chọn chủ đề bên trái, rồi chọn một bài để nghe chép chính tả.",
+      "selectLessonWelcome": "Bạn của tôi thân mến,\nchọn một bài ở bên trái và bắt đầu luyện nghe nhé."
+    },
     "result": {
       "nextLesson": "Bài tiếp theo",
       "backToLessons": "Về danh sách bài"
     },
     "sentenceProgress": "Câu {{current}}/{{total}}",
     "listenSentence": "Nghe câu này",
+    "listeningNow": "Đang nghe...",
+    "audioLoading": "Đang tải audio...",
+    "audioLoadError": "Không thể tải audio",
+    "listenShortcutHint": "Mẹo: nhấn phím Ctrl để nghe lại câu này",
     "nextSentence": "Câu tiếp theo",
     "hint": "Gợi ý",
+    "hintHide": "Ẩn gợi ý",
+    "translationLabel": "Bản dịch",
     "hintLocked": "Nghe thêm {{count}} lần nữa để mở gợi ý",
-    "sentenceCorrect": "Chính xác!"
+    "lessonAttemptCount": "Đã luyện {{count}} lần",
+    "sentenceCorrect": "Chính xác!",
+    "sentenceIncorrect": "Chưa đúng - sửa lại rồi kiểm tra lại nhé",
+    "submitting": "Đang chấm điểm bài làm...",
+    "submitError": "Không thể chấm điểm bài làm này",
+    "goToAi": "Luyện tập với AI",
+    "historyRedo": "Làm lại"
   },
   "profile": {
     "title": "Hồ sơ",

@@ -1,7 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   generateAiPractice,
+  generateAiPracticeFromAttempt,
   getAiPractice,
+  getAiPracticeDetail,
+  getDictationAttemptDetail,
   getDictationClip,
   getDictationFacets,
   getDictationFolderLessons,
@@ -10,7 +13,11 @@ import {
   startDictationSession,
   submitDictationAttempt,
 } from "@/api/learners"
-import type { DictationAttemptRequest, StartDictationSessionRequest } from "@/types/api"
+import type {
+  DictationAttemptRequest,
+  GenerateAiPracticeRequest,
+  StartDictationSessionRequest,
+} from "@/types/api"
 
 export function useDictationFacets(userId: string) {
   return useQuery({
@@ -36,10 +43,10 @@ export function useDictationFolderLessons(userId: string, folderId: string | nul
   })
 }
 
-export function useDictationClip(userId: string, clipId: number | null) {
+export function useDictationClip(userId: string, clipId: number | null, translationLang?: string) {
   return useQuery({
-    queryKey: ["learner", userId, "dictation", "clips", clipId],
-    queryFn: () => getDictationClip(userId, clipId as number),
+    queryKey: ["learner", userId, "dictation", "clips", clipId, translationLang],
+    queryFn: () => getDictationClip(userId, clipId as number, translationLang),
     enabled: !!userId && !!clipId,
   })
 }
@@ -69,6 +76,14 @@ export function useDictationHistory(userId: string) {
   })
 }
 
+export function useDictationAttemptDetail(userId: string, attemptId: number | null) {
+  return useQuery({
+    queryKey: ["learner", userId, "dictation", "history", attemptId],
+    queryFn: () => getDictationAttemptDetail(userId, attemptId as number),
+    enabled: !!userId && attemptId != null,
+  })
+}
+
 export function useAiPractice(userId: string) {
   return useQuery({
     queryKey: ["learner", userId, "dictation", "ai-practice"],
@@ -77,11 +92,31 @@ export function useAiPractice(userId: string) {
   })
 }
 
+export function useAiPracticeDetail(userId: string, practiceItemId: number | null) {
+  return useQuery({
+    queryKey: ["learner", userId, "dictation", "ai-practice", practiceItemId],
+    queryFn: () => getAiPracticeDetail(userId, practiceItemId as number),
+    enabled: !!userId && practiceItemId != null,
+  })
+}
+
 export function useGenerateAiPractice(userId: string) {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: () => generateAiPractice(userId),
+    mutationFn: (request: GenerateAiPracticeRequest) => generateAiPractice(userId, request),
+    onSuccess: (items) => {
+      queryClient.setQueryData(["learner", userId, "dictation", "ai-practice"], items)
+    },
+  })
+}
+
+export function useGenerateAiPracticeFromAttempt(userId: string) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ attemptId, translationLang }: { attemptId: number; translationLang?: string }) =>
+      generateAiPracticeFromAttempt(userId, attemptId, translationLang),
     onSuccess: (items) => {
       queryClient.setQueryData(["learner", userId, "dictation", "ai-practice"], items)
     },

@@ -14,6 +14,41 @@ import { formatDate, formatRelativeTime } from "@/lib/format"
 import { useAuthStore } from "@/stores/auth-store"
 import type { CategoryProgress } from "@/types/api"
 
+// Maps a raw API status string (e.g. "UPLOADED", "COMPLETED") to one of the three
+// translated labels the learner actually cares about. The dashboard shows only a handful
+// of recordings, so this simple lookup is sufficient — the full RecordingStatusBadge in
+// RecordingsPage handles the complete status map with icons and colors.
+type DashboardStatusTone = "processing" | "ready" | "failed" | "unknown"
+
+const STATUS_TO_TONE: Record<string, DashboardStatusTone> = {
+  uploaded: "processing",
+  pending: "processing",
+  queued: "processing",
+  processing: "processing",
+  transcribing: "processing",
+  analyzing: "processing",
+  ready: "ready",
+  completed: "ready",
+  analyzed: "ready",
+  done: "ready",
+  failed: "failed",
+  error: "failed",
+}
+
+function recordingStatusLabel(
+  status: string,
+  t: (key: string) => string
+): { label: string; tone: DashboardStatusTone } {
+  const tone = STATUS_TO_TONE[status.toLowerCase()] ?? "unknown"
+  const labelMap: Record<DashboardStatusTone, string> = {
+    processing: t("recordings.statusProcessing"),
+    ready: t("recordings.statusReady"),
+    failed: t("recordings.statusFailed"),
+    unknown: status,
+  }
+  return { label: labelMap[tone], tone }
+}
+
 // Picks the category with the most recently updated weak points, used to ground the practice
 // callout in a specific, traceable piece of evidence rather than an abstract total.
 function mostRecentProgress(categoryProgress: CategoryProgress[]): CategoryProgress | undefined {
@@ -43,11 +78,11 @@ export function DashboardPage() {
 
       {isLoading && (
         <div className="flex flex-col gap-6">
-          <Skeleton className="h-28 w-full rounded-3xl" />
-          <Skeleton className="h-64 w-full rounded-3xl" />
+          <Skeleton className="h-28 w-full rounded-2xl" />
+          <Skeleton className="h-64 w-full rounded-2xl" />
           <div className="grid gap-6 lg:grid-cols-2">
-            <Skeleton className="h-64 w-full rounded-3xl" />
-            <Skeleton className="h-64 w-full rounded-3xl" />
+            <Skeleton className="h-64 w-full rounded-2xl" />
+            <Skeleton className="h-64 w-full rounded-2xl" />
           </div>
         </div>
       )}
@@ -181,9 +216,12 @@ export function DashboardPage() {
                         className="flex items-center justify-between gap-3 rounded-2xl bg-muted/60 p-3"
                       >
                         <div className="flex min-w-0 items-center gap-2">
-                          <Mic className="size-4 shrink-0 text-muted-foreground" />
+                          <Mic className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                          <span className="truncate text-sm font-medium">
+                            {formatDate(recording.createdAt, i18n.language)}
+                          </span>
                           <span
-                            className="truncate font-mono text-sm text-muted-foreground"
+                            className="truncate font-mono text-xs text-muted-foreground"
                             title={recording.recordingId}
                           >
                             {t("dashboard.recordingLabel", {
@@ -192,10 +230,11 @@ export function DashboardPage() {
                           </span>
                         </div>
                         <div className="flex shrink-0 items-center gap-2">
-                          <Badge variant="outline">{recording.status}</Badge>
-                          <span className="text-sm text-muted-foreground">
-                            {formatDate(recording.createdAt, i18n.language)}
-                          </span>
+                          <Badge
+                            variant={recordingStatusLabel(recording.status, t).tone === "failed" ? "destructive" : "secondary"}
+                          >
+                            {recordingStatusLabel(recording.status, t).label}
+                          </Badge>
                         </div>
                       </li>
                     ))}

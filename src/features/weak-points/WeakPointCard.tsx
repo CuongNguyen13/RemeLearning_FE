@@ -35,15 +35,18 @@ export function WeakPointCard({ weakPoint, isPriority = false }: WeakPointCardPr
             title, and a severity badge that carries both an icon and text so risk is never
             conveyed by color alone. */}
         <div className="flex items-start gap-3">
+          {/* Domain chip: the icon shape + tint identify the skill (vocabulary/grammar/
+              pronunciation). Decorative — the category name is conveyed by the badge and
+              heading text below, so the chip is hidden from assistive tech to avoid
+              redundant announcements. */}
           <span
-            role="img"
-            aria-label={t(`categories.${weakPoint.category}`)}
+            aria-hidden="true"
             className={cn(
               "flex size-9 shrink-0 items-center justify-center rounded-full",
               domain.chipClassName
             )}
           >
-            <DomainIcon className="size-4.5" aria-hidden="true" />
+            <DomainIcon className="size-4.5" />
           </span>
           <h3
             className={cn(

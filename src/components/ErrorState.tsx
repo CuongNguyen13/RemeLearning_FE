@@ -11,8 +11,11 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
   const { t } = useTranslation()
 
   return (
-    <div className="flex flex-col items-center justify-center gap-3 rounded-3xl border border-destructive/30 bg-destructive/5 py-12 text-center">
-      <AlertTriangle className="size-6 text-destructive" />
+    <div
+      role="alert"
+      className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-destructive/30 bg-destructive/5 py-12 text-center"
+    >
+      <AlertTriangle className="size-6 text-destructive" aria-hidden="true" />
       <p className="font-medium text-destructive">
         {message ?? t("common.somethingWentWrong")}
       </p>

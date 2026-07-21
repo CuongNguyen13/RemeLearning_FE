@@ -131,14 +131,17 @@ export interface DictationLessonSummary {
   code: string
   title: string
   audioUrl: string
+  /** Number of past attempts by the current learner (0 = never practiced). */
+  attemptCount?: number
 }
 
-/** One sentence of a clip's script, with optional AI-aligned audio timestamps. */
+/** One sentence of a clip's script, with optional AI-aligned audio timestamps and translation. */
 export interface DictationSentence {
   index: number
   text: string
   startMs: number | null
   endMs: number | null
+  translation: string | null
 }
 
 /** Full detail of a single clip opened for sentence-by-sentence practice. */
@@ -180,11 +183,25 @@ export interface WordDiff {
   expectedWord: string | null
 }
 
+/**
+ * One incorrect attempt at a single sentence during sentence-mode practice. The learner must
+ * eventually retype the sentence correctly to advance (see SentenceDictationRunner), so these never
+ * show up in the final `userTranscript` diff - they're carried separately so the backend can still
+ * fold them into the same miss/weak-point pipeline as a regular wrong answer.
+ */
+export interface DictationSentenceMistake {
+  sentenceIndex: number
+  expectedText: string
+  attemptedText: string
+}
+
 /** Exactly one of clipId / practiceItemId is set (library clip vs AI-practice clip). */
 export interface DictationAttemptRequest {
   clipId?: number
   practiceItemId?: number
   userTranscript: string
+  /** Wrong attempts recorded while working through a sentence-mode clip; sent for both library and AI-practice attempts when there were sentence-mode retries. */
+  sentenceMistakes?: DictationSentenceMistake[]
 }
 
 export interface DictationAttemptResult {
@@ -206,10 +223,63 @@ export interface DictationHistoryEntry {
   accuracy: number
   wer: number
   attemptedAt: string
+  /** How many attempts (including this one) the learner has made on this clip; null for AI-practice entries. */
+  attemptCount: number | null
+  /** LIBRARY when clipId is present, AI_PRACTICE otherwise. */
+  practiceType: "LIBRARY" | "AI_PRACTICE"
 }
 
-/** One AI-practice item (Supertonic-voiced); audioUrl null until synthesized. */
+/** One word the learner got wrong in a past attempt. */
+export interface DictationMistake {
+  expectedWord: string | null
+  actualWord: string | null
+  tag: WordDiffTag
+}
+
+/** Full detail for one past dictation attempt, shown when a History entry is clicked. */
+export interface DictationAttemptDetail {
+  attemptId: number
+  title: string | null
+  skill: string | null
+  level: string | null
+  examType: string | null
+  referenceText: string
+  userTranscript: string
+  accuracy: number
+  wer: number
+  mistakes: DictationMistake[]
+  aiSuggestions: string[]
+  attemptedAt: string
+}
+
+/** One AI-practice item (Supertonic-voiced); audioUrl null until synthesized. level/examType/topic are
+ * null for items generated without an explicit facet selection (e.g. from a history attempt). */
 export interface DictationPracticeItem {
   practiceItemId: number
   audioUrl: string | null
+  level: string | null
+  examType: string | null
+  topic: string | null
+}
+
+/** Full detail for one AI-practice item - passage text split into sentences for sentence-by-sentence
+ * practice, mirroring DictationClipDetail. Sentences never carry AI-aligned timestamps (the passage's
+ * audio is one merged file with no per-sentence timing), so SentenceDictationRunner falls back to its
+ * own word-count-share estimate the same way it does for an unaligned library clip. */
+export interface DictationPracticeItemDetail {
+  practiceItemId: number
+  audioUrl: string | null
+  scriptText: string
+  level: string | null
+  examType: string | null
+  topic: string | null
+  sentences: DictationSentence[]
+}
+
+/** Facets for generating one AI-practice passage. Each of level/examType may be a concrete value
+ * (e.g. "B1", "TOEIC"), the literal "RANDOM" (resolved server-side), or omitted (no preference). */
+export interface GenerateAiPracticeRequest {
+  level?: string
+  examType?: string
+  translationLang?: string
 }

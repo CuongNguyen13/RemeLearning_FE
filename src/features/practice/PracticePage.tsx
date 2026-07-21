@@ -12,12 +12,8 @@ import { Progress } from "@/components/ui/progress"
 import { Skeleton } from "@/components/ui/skeleton"
 import { usePracticeNext, useSubmitPracticeRedo } from "@/features/practice/hooks"
 import { ApiError } from "@/lib/http"
+import { EASE_OUT, FEEDBACK_PAUSE_S } from "@/lib/motion"
 import { useAuthStore } from "@/stores/auth-store"
-
-// Quint ease-out: fast start, gentle settle - no bounce/elastic per the motion guidelines.
-const EASE_OUT = [0.22, 1, 0.36, 1] as const
-// How long the correct/incorrect confirmation holds before the next card slides in.
-const FEEDBACK_PAUSE_MS = 550
 
 type SelfAssessment = "correct" | "incorrect"
 
@@ -58,7 +54,7 @@ export function PracticePage() {
         setFeedback(null)
         setIndex((i) => i + 1)
       },
-      reduceMotion ? 0 : FEEDBACK_PAUSE_MS
+      reduceMotion ? 0 : FEEDBACK_PAUSE_S * 1000
     )
   }
 
@@ -103,7 +99,7 @@ export function PracticePage() {
       {isLoading && (
         <div className="flex w-full max-w-md flex-col gap-3">
           <Skeleton className="h-1.5 w-full rounded-full" />
-          <Skeleton className="h-72 w-full rounded-3xl" />
+          <Skeleton className="h-72 w-full rounded-2xl" />
         </div>
       )}
       {isError && <ErrorState onRetry={() => void refetch()} />}
@@ -155,10 +151,10 @@ export function PracticePage() {
                 }}
                 animate={{ rotateY: flipped ? 180 : 0 }}
                 transition={{ duration: reduceMotion ? 0 : 0.5, ease: EASE_OUT }}
-                className="relative grid w-full cursor-pointer rounded-3xl [transform-style:preserve-3d] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="relative grid w-full cursor-pointer rounded-2xl [transform-style:preserve-3d] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
               >
                 {/* Front: the weak point being drilled, grounded in why it's here */}
-                <div className="col-start-1 row-start-1 flex min-h-72 flex-col items-center justify-center gap-3 rounded-3xl bg-card p-6 text-center shadow-clay [backface-visibility:hidden]">
+                <div className="col-start-1 row-start-1 flex min-h-72 flex-col items-center justify-center gap-3 rounded-2xl bg-card p-6 text-center shadow-clay [backface-visibility:hidden]">
                   <Badge variant="secondary">{t(`categories.${current.category}`)}</Badge>
                   <p className="font-heading text-2xl font-medium text-balance">
                     {current.label}
@@ -169,7 +165,7 @@ export function PracticePage() {
                   <p className="text-sm text-muted-foreground">{t("practice.tapToReveal")}</p>
                 </div>
                 {/* Back: the correct form / recommendation, revealed on flip */}
-                <div className="col-start-1 row-start-1 flex min-h-72 flex-col items-center justify-center gap-3 rounded-3xl bg-primary p-6 text-center text-primary-foreground shadow-clay [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                <div className="col-start-1 row-start-1 flex min-h-72 flex-col items-center justify-center gap-3 rounded-2xl bg-primary p-6 text-center text-primary-foreground shadow-clay [backface-visibility:hidden] [transform:rotateY(180deg)]">
                   <p className="text-sm font-medium opacity-80">{t("practice.gotItRight")}</p>
                   <p className="text-lg font-medium text-balance">
                     {current.recommendation || current.label}
@@ -244,7 +240,7 @@ export function PracticePage() {
             initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: reduceMotion ? 0 : 0.3, ease: EASE_OUT }}
-            className="flex w-full max-w-md flex-col items-center gap-4 rounded-3xl bg-card p-8 text-center shadow-clay"
+            className="flex w-full max-w-md flex-col items-center gap-4 rounded-2xl bg-card p-8 text-center shadow-clay"
           >
             <motion.div
               initial={{ scale: reduceMotion ? 1 : 0.7, opacity: 0 }}

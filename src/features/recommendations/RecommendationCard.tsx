@@ -33,15 +33,16 @@ export function RecommendationCard({ recommendation, isPriority = false }: Recom
             weak point that this recommendation addresses and the recommendation itself
             should read as one visual family, not two unrelated card designs. */}
         <div className="flex items-start gap-3">
+          {/* Domain chip, mirrored from WeakPointCard so the two card types read as siblings.
+              Decorative — category name is conveyed by the badge and heading text. */}
           <span
-            role="img"
-            aria-label={t(`categories.${recommendation.category}`)}
+            aria-hidden="true"
             className={cn(
               "flex size-9 shrink-0 items-center justify-center rounded-full",
               domain.chipClassName
             )}
           >
-            <DomainIcon className="size-4.5" aria-hidden="true" />
+            <DomainIcon className="size-4.5" />
           </span>
           <h3
             className={cn(

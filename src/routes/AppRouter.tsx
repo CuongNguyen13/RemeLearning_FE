@@ -30,6 +30,12 @@ const PracticePage = lazy(() =>
 const DictationPage = lazy(() =>
   import("@/features/dictation/DictationPage").then((m) => ({ default: m.DictationPage }))
 )
+const DictationLessonPage = lazy(() =>
+  import("@/features/dictation/DictationLessonPage").then((m) => ({ default: m.DictationLessonPage }))
+)
+const DictationAiPracticePage = lazy(() =>
+  import("@/features/dictation/DictationAiPracticePage").then((m) => ({ default: m.DictationAiPracticePage }))
+)
 const ProfilePage = lazy(() =>
   import("@/features/profile/ProfilePage").then((m) => ({ default: m.ProfilePage }))
 )
@@ -60,6 +66,8 @@ const router = createBrowserRouter([
       { path: "/recommendations", element: <RecommendationsPage /> },
       { path: "/practice", element: <PracticePage /> },
       { path: "/dictation", element: <DictationPage /> },
+      { path: "/dictation/lesson/:clipId", element: <DictationLessonPage /> },
+      { path: "/dictation/ai-practice/:practiceItemId", element: <DictationAiPracticePage /> },
       { path: "/profile", element: <ProfilePage /> },
     ],
   },
