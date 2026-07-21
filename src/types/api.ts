@@ -131,8 +131,14 @@ export interface DictationLessonSummary {
   code: string
   title: string
   audioUrl: string
-  /** Number of past attempts by the current learner (0 = never practiced). */
-  attemptCount?: number
+  /** CEFR level (A1..C2), null if untagged. */
+  level: string | null
+  /** Number of sentences in the script — stands in for a duration estimate (no audio-length data is stored). */
+  sentenceCount: number
+  /** Number of past attempts by the current learner; null/undefined if never attempted. */
+  attemptCount?: number | null
+  /** 0..1 accuracy of the learner's most recent attempt; null/undefined if never attempted. */
+  latestAccuracy?: number | null
 }
 
 /** One sentence of a clip's script, with optional AI-aligned audio timestamps and translation. */
@@ -183,6 +189,24 @@ export interface WordDiff {
   expectedWord: string | null
 }
 
+/** Root-cause classification for one dictation mistake (listening-coach analysis). */
+export type DictationErrorCategory = "LEXICON" | "GRAMMAR" | "PHONOLOGY"
+
+/** One row of the mistake-comparison table: original vs. what the learner typed, root-classified. */
+export interface DictationErrorEntry {
+  original: string | null
+  transcribed: string | null
+  category: DictationErrorCategory
+  note?: string | null
+}
+
+/** A root-cause explanation for one category, only present when it has misses. */
+export interface DictationRootCauseGroup {
+  category: DictationErrorCategory
+  summary: string
+  examples: string[]
+}
+
 /**
  * One incorrect attempt at a single sentence during sentence-mode practice. The learner must
  * eventually retype the sentence correctly to advance (see SentenceDictationRunner), so these never
@@ -209,7 +233,9 @@ export interface DictationAttemptResult {
   accuracy: number
   wer: number
   diff: WordDiff[]
-  aiSuggestions: string[]
+  errorTable: DictationErrorEntry[]
+  rootCauses: DictationRootCauseGroup[]
+  actionAdvice: string[]
   practiceSentences: string[]
 }
 
@@ -248,7 +274,9 @@ export interface DictationAttemptDetail {
   accuracy: number
   wer: number
   mistakes: DictationMistake[]
-  aiSuggestions: string[]
+  errorTable: DictationErrorEntry[]
+  rootCauses: DictationRootCauseGroup[]
+  actionAdvice: string[]
   attemptedAt: string
 }
 

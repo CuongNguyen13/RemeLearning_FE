@@ -2,21 +2,21 @@
 name: RemeLearning
 description: Spaced repetition against your own mistakes — an AI-powered English speaking coach
 colors:
-  primary: "#1D4ED8"
-  primary-foreground: "#F4F8FC"
-  secondary: "#DBEAFE"
-  secondary-foreground: "#1E3A8A"
-  accent-warm: "#C2410C"
-  accent-warm-foreground: "#FFF7ED"
-  background: "#F4F8FC"
-  foreground: "#101B2D"
+  primary: "#0F766E"
+  primary-foreground: "#F3FAF8"
+  secondary: "#D8EFEA"
+  secondary-foreground: "#0F4C46"
+  accent-warm: "#B45309"
+  accent-warm-foreground: "#FFFBEB"
+  background: "#F3FAF8"
+  foreground: "#0B211D"
   card: "#FFFFFF"
-  muted: "#EAF1FA"
-  muted-foreground: "#56708A"
+  muted: "#E4F0EE"
+  muted-foreground: "#3F5B57"
   destructive: "#DC2626"
-  border: "#D3E3F3"
-  sidebar: "#1E3A8A"
-  sidebar-foreground: "#DCE8FB"
+  border: "#C9E4DE"
+  sidebar: "#0B3B36"
+  sidebar-foreground: "#D7ECE7"
 typography:
   heading:
     fontFamily: "Fredoka, sans-serif"
@@ -57,54 +57,55 @@ components:
 
 ## 1. Overview
 
-**Creative North Star: "The Study Companion"**
+**Creative North Star: "The Signal"**
 
-RemeLearning is a calm-blue study surface that runs a warm, energetic pulse underneath it —
-"Focused Blue" (the palette's own name in the codebase) carries the credibility and concentration
-a learner needs to trust what the app tells them about their own mistakes, while the orange
-accent, motion, and copy carry the encouragement. The two are deliberately split: **the base
+RemeLearning analyzes a learner's own *spoken* English — recordings, transcripts, pronunciation.
+"Signal Teal" (the palette's own name in the codebase) leans into that: teal is the color a learner
+already associates with "correct," "verified," "on track" — a feedback color, not a corporate one —
+so the base palette itself reinforces the product's core promise (trustworthy evidence about your
+own mistakes) instead of just looking calm. Amber is the one warm accent, reserved for CTAs and
+celebratory moments. The split from the prior "Focused Blue" system stays intentional: **the base
 palette earns trust, the accent and motion earn momentum.** This system explicitly rejects the
 generic AI-SaaS dashboard look — no hero-metric tiles, no gradient text, no side-stripe accent
-borders, no identical icon+heading+text card grids repeated down the page — and it rejects
-childish gamification (mascots, confetti, badge walls). Energy here reads as *responsive and
-warm*, not loud.
+borders, no identical icon+heading+text card grids repeated down the page — and it rejects childish
+gamification (mascots, confetti, badge walls). Energy here reads as *responsive and warm*, not loud.
 
 Every weak point or recommendation the app surfaces is evidence pulled from the learner's own
 recordings; the interface should always make that traceability visible (which recording, how
 often, how recently) rather than presenting a recommendation as generic advice.
 
 **Key Characteristics:**
-- Calm blue base (background, primary, sidebar) for trust and low cognitive load
-- One warm orange accent (`accent-warm`) reserved for CTAs and celebratory/motivating moments
+- Teal base (background, primary, sidebar) — a feedback/correctness hue, not a generic B2B blue
+- One warm amber accent (`accent-warm`) reserved for CTAs and celebratory/motivating moments
 - Soft, generous corner radii (1.15rem base) — a rounded, approachable geometry (Fredoka headings reinforce this)
 - Flat-plus-glow: nearly flat surfaces, with a soft colored glow (`shadow-clay`) reserved for elevated, primary elements
 - Two-weight type system: Fredoka for headings (personality), Nunito for body (readability)
 
 ## 2. Colors
 
-A calm, low-chroma blue base with a single warm accent — restrained-to-committed on the primary hue, with the warm accent used sparingly and deliberately.
+A calm, low-chroma teal base with a single warm accent — restrained-to-committed on the primary hue, with the warm accent used sparingly and deliberately.
 
 ### Primary
-- **Focused Blue** (`#1D4ED8`): primary actions, links, active nav/tab states, focus rings. The trust anchor of the system — used deliberately, not washed across every surface.
+- **Signal Teal** (`#0F766E`): primary actions, links, active nav/tab states, focus rings. The trust anchor of the system, doubling as the app's implicit "you got this right" cue — used deliberately, not washed across every surface.
 
 ### Secondary
-- **Pale Sky** (`#DBEAFE` / text `#1E3A8A`): secondary buttons, selected chips, low-emphasis highlights that still read as "in the blue family."
+- **Sea Glass** (`#D8EFEA` / text `#0F4C46`): secondary buttons, selected chips, low-emphasis highlights that still read as "in the teal family."
 
 ### Tertiary
-- **Ember Orange** (`#C2410C` / text `#FFF7ED`): the one warm accent in the system. Reserved for primary CTAs that need urgency or celebration (e.g. "start practice," a streak milestone, a completed recommendation) — never for routine UI chrome.
+- **Sunrise Amber** (`#B45309` / text `#FFFBEB`): the one warm accent in the system. Reserved for primary CTAs that need urgency or celebration (e.g. "start practice," a streak milestone, a completed recommendation) — never for routine UI chrome.
 
 ### Neutral
-- **Frost Blue** (`#F4F8FC`): app background, lightly tinted toward the brand hue rather than true white.
-- **Deep Ink Navy** (`#101B2D`): body text and headings — verified for AA contrast against Frost Blue.
+- **Mint Frost** (`#F3FAF8`): app background, lightly tinted toward the brand hue rather than true white or cream.
+- **Deep Ink Teal** (`#0B211D`): body text and headings — verified for AA contrast against Mint Frost.
 - **Card White** (`#FFFFFF`): card and popover surfaces, the one true-white layer.
-- **Muted Mist** (`#EAF1FA` / text `#56708A`): disabled states, secondary metadata, subtle section backgrounds.
-- **Hairline Blue** (`#D3E3F3`): borders and input strokes — always a tint of the primary hue, never plain gray.
-- **Deep Study Navy** (`#1E3A8A`, sidebar-only): the sidebar inverts to this dark navy, giving the app shell a distinct "control room" register from the light content surfaces.
+- **Muted Mist** (`#E4F0EE` / text `#3F5B57`): disabled states, secondary metadata, subtle section backgrounds.
+- **Hairline Teal** (`#C9E4DE`): borders and input strokes — always a tint of the primary hue, never plain gray.
+- **Deep Study Teal** (`#0B3B36`, sidebar-only): the sidebar inverts to this dark ink-teal, giving the app shell a distinct "control room" register from the light content surfaces.
 
 ### Named Rules
-**The One Accent Rule.** Ember Orange (`accent-warm`) appears on at most one element per screen — the single primary CTA or a celebratory state. If two elements compete for it, one loses.
+**The One Accent Rule.** Sunrise Amber (`accent-warm`) appears on at most one element per screen — the single primary CTA or a celebratory state. If two elements compete for it, one loses.
 
-**The No-Gray-Text Rule.** Body and label text never drop to a flat neutral gray; `muted-foreground` (`#56708A`) is always a tint of the primary hue, kept at ≥4.5:1 contrast against its background.
+**The No-Gray-Text Rule.** Body and label text never drop to a flat neutral gray; `muted-foreground` (`#3F5B57`) is always a tint of the primary hue, kept at ≥4.5:1 contrast against its background.
 
 ## 3. Typography
 
@@ -127,7 +128,7 @@ A calm, low-chroma blue base with a single warm accent — restrained-to-committ
 Nearly flat at rest — most surfaces (inputs, muted panels, secondary buttons) carry no shadow at all, only a `ring-1 ring-foreground/10` hairline. Shadows are reserved as a **hybrid**: a soft, colored "clay" glow used only on the primary/elevated elements that most need to invite interaction (hero cards, primary CTAs, the active/focused element), not as ambient depth for every card.
 
 ### Shadow Vocabulary
-- **`shadow-clay`** (inset highlight + soft blue-tinted glow, `box-shadow: inset 0 1px 0 …, 0 4px 10px -4px color-mix(in oklch, var(--primary), transparent 82%), 0 18px 36px -16px color-mix(in oklch, var(--primary), transparent 68%)`): the primary elevation treatment — a soft blue-tinted lift, used on the app's most important surface per screen.
+- **`shadow-clay`** (inset highlight + soft teal-tinted glow, `box-shadow: inset 0 1px 0 …, 0 4px 10px -4px color-mix(in oklch, var(--primary), transparent 82%), 0 18px 36px -16px color-mix(in oklch, var(--primary), transparent 68%)`): the primary elevation treatment — a soft teal-tinted lift, used on the app's most important surface per screen.
 - **`shadow-clay-warm`** (same construction, tinted with `accent-warm`): the celebratory variant — pairs with the One Accent Rule, used only where the warm accent itself is already present.
 
 ### Named Rules
@@ -138,31 +139,31 @@ Nearly flat at rest — most surfaces (inputs, muted panels, secondary buttons) 
 ### Buttons
 - **Shape:** `rounded-lg` at default size (`min(var(--radius-md), 10-12px)` at compact sizes) — soft corners, never fully pill-shaped, never sharp.
 - **Primary:** `bg-primary` / `text-primary-foreground`, `hover:bg-primary/80`. The default action across the app.
-- **Secondary:** `bg-secondary` / `text-secondary-foreground` — the Pale Sky treatment, for the second-priority action alongside a primary.
+- **Secondary:** `bg-secondary` / `text-secondary-foreground` — the Sea Glass treatment, for the second-priority action alongside a primary.
 - **Outline / Ghost:** transparent or bordered, `hover:bg-muted` — for tertiary/low-emphasis actions (cancel, dismiss).
 - **Destructive:** tinted `bg-destructive/10` with `text-destructive`, not a solid red fill — keeps destructive actions legible without shouting.
 - **Hover / Focus:** all variants ease via `transition-all`; focus state is a 3px `ring-ring/50` plus a border color shift, never an outline-less focus state.
 
 ### Cards / Containers
 - **Corner Style:** `rounded-xl` (~1.15rem), consistent with the system's soft-geometry rule.
-- **Background:** Card White (`#FFFFFF`) on the Frost Blue app background — the one true-white layer in the system.
+- **Background:** Card White (`#FFFFFF`) on the Mint Frost app background — the one true-white layer in the system.
 - **Shadow Strategy:** flat by default (`ring-1 ring-foreground/10` hairline only); `shadow-clay` reserved per the Earned Glow Rule.
 - **Internal Padding:** `--card-spacing` token, 3–4 spacing units depending on `size` variant (`sm` vs `default`).
 
 ### Inputs / Fields
-- **Style:** transparent background, `border-input` (Hairline Blue) stroke, `rounded-lg`.
+- **Style:** transparent background, `border-input` (Hairline Teal) stroke, `rounded-lg`.
 - **Focus:** border shifts to `ring` color plus a 3px `ring-ring/50` glow — same focus language as buttons, for consistency.
 - **Error:** `aria-invalid` swaps the border and ring to `destructive` at reduced opacity — never a full-saturation red border.
 
 ### Navigation (Sidebar)
-- **Style:** inverts to Deep Study Navy (`#1E3A8A`) background with light foreground text — the one surface in the system that flips light/dark logic, giving the shell a distinct "control room" identity from the light content area.
-- **States:** active/hover uses `sidebar-accent` (a low-opacity white wash), not the primary blue, since the sidebar itself is already blue.
+- **Style:** inverts to Deep Study Teal (`#0B3B36`) background with light foreground text — the one surface in the system that flips light/dark logic, giving the shell a distinct "control room" identity from the light content area.
+- **States:** active/hover uses `sidebar-accent` (a low-opacity white wash), not the primary teal, since the sidebar itself is already teal.
 
 ## 6. Do's and Don'ts
 
 ### Do:
-- **Do** keep Ember Orange (`#C2410C`) to one element per screen — the single primary CTA or a celebratory moment (Named Rule: The One Accent Rule).
-- **Do** tint every neutral (background, muted, border) toward the primary blue hue rather than reaching for flat gray.
+- **Do** keep Sunrise Amber (`#B45309`) to one element per screen — the single primary CTA or a celebratory moment (Named Rule: The One Accent Rule).
+- **Do** tint every neutral (background, muted, border) toward the primary teal hue rather than reaching for flat gray or cream.
 - **Do** reserve `shadow-clay` for the single most important surface per screen; everything else stays flat with a hairline ring.
 - **Do** ground every weak-point/recommendation card in traceable evidence (source recording, frequency, recency) rather than presenting it as generic advice.
 - **Do** carry energy through motion, copy, and the warm accent — not by widening the base palette's saturation.
@@ -172,5 +173,5 @@ Nearly flat at rest — most surfaces (inputs, muted panels, secondary buttons) 
 - **Don't** repeat the identical icon+heading+text card grid across sections; vary structure per the content's actual shape.
 - **Don't** add tiny uppercase eyebrows above every section — that scaffold is banned outright.
 - **Don't** introduce mascots, confetti, or badge-wall gamification — energetic and playful stops short of childish.
-- **Don't** drop body or label text to flat gray; `muted-foreground` must stay a blue-tinted, ≥4.5:1-contrast color.
+- **Don't** drop body or label text to flat gray; `muted-foreground` must stay a teal-tinted, ≥4.5:1-contrast color.
 - **Don't** add a third font family for "emphasis" — Fredoka (headings) and Nunito (body) are the whole system.

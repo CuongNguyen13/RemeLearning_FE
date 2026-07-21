@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
-import { AiSuggestions } from "@/features/dictation/AiSuggestions"
+import { AiAnalysisPanel } from "@/features/dictation/AiAnalysisPanel"
 import { DiffView } from "@/features/dictation/DiffView"
 import { EASE_OUT } from "@/lib/motion"
 import { cn } from "@/lib/utils"
@@ -101,10 +101,12 @@ export function AttemptResultPanel({
       {/* Word diff — rendered word-by-word with clear correct/incorrect styling. */}
       <DiffView diff={result.diff} extraLabel={t("dictation.extraWords")} />
 
-      {/* AI suggestions — compact card with badge header. */}
-      {result.aiSuggestions.length > 0 && (
-        <AiSuggestions suggestions={result.aiSuggestions} />
-      )}
+      {/* AI root-cause analysis — mistake table, per-category root causes, actionable advice. */}
+      <AiAnalysisPanel
+        errorTable={result.errorTable}
+        rootCauses={result.rootCauses}
+        actionAdvice={result.actionAdvice}
+      />
 
       {/* Navigation actions. */}
       <div className="flex gap-2">

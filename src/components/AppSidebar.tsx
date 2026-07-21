@@ -70,7 +70,7 @@ function NavItemLink({
           "group flex min-h-11 items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-medium outline-none transition-all duration-150 ease-out motion-reduce:transition-none",
           "focus-visible:ring-3 focus-visible:ring-sidebar-ring focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar",
           isActive
-            ? "bg-sidebar-accent text-white shadow-sm shadow-black/10"
+            ? "border border-white/15 bg-sidebar-accent text-white shadow-clay backdrop-blur-md"
             : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
         )
       }
@@ -89,13 +89,17 @@ export function AppSidebar({ className, onNavigate }: AppSidebarProps) {
   return (
     <aside
       className={cn(
-        "relative h-svh w-64 shrink-0 flex-col overflow-hidden bg-sidebar text-sidebar-foreground",
+        "relative h-svh w-64 shrink-0 flex-col overflow-hidden border-r border-sidebar-border bg-sidebar/92 text-sidebar-foreground backdrop-blur-2xl",
         className
       )}
     >
-      {/* Ambient glows — soft decorative blurs that give the sidebar depth without distracting. */}
-      <div className="pointer-events-none absolute -top-20 -right-16 size-64 rounded-full bg-white/10 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 -left-16 size-56 rounded-full bg-accent-warm/10 blur-3xl" />
+      {/* Ambient glows — soft decorative blurs that give the sidebar its frosted-glass depth.
+          Sitting inside the sidebar's own stacking context (not real backdrop-see-through),
+          so the glass reads consistently regardless of what's on the other side of the rail. */}
+      <div className="pointer-events-none absolute -top-20 -right-16 size-64 rounded-full bg-white/12 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 -left-16 size-56 rounded-full bg-accent-warm/12 blur-3xl" />
+      {/* Specular sheen — a faint top-down highlight, the glass cue that sells the material. */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white/8 to-transparent" />
 
       {/* Brand header — app icon + name, the visual anchor at the top of the sidebar. */}
       <div className="relative z-10 flex h-16 items-center gap-2.5 px-6">

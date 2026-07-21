@@ -10,6 +10,13 @@ export function normalizeForMatch(text: string): string {
     .trim()
 }
 
+// Strips a leading "Speaker: " label from a sentence's text (e.g. "Anna: Excuse me" -> "Excuse me").
+// The speaker label is transcript metadata, not part of what's actually spoken in the audio, so the
+// learner shouldn't have to type it and it shouldn't count toward audio-timing word estimates.
+export function stripSpeakerLabel(text: string): string {
+  return text.replace(/^[A-Za-z][A-Za-z .'-]{0,29}:\s*/, "")
+}
+
 interface UseSentenceRunnerResult {
   index: number
   total: number
@@ -75,11 +82,14 @@ export function useSentenceRunner(
     [answers, index, sentences.length, onComplete, mistakes]
   )
 
-  // Editing after a check invalidates it - the learner must check again before advancing.
+  // Editing after a check invalidates it - the learner must check again before advancing. Also
+  // hides an open hint, since it'd otherwise keep handing over the answer while the learner is
+  // still supposed to be recalling it from memory.
   const onInputChange = useCallback((value: string) => {
     setInput(value)
     setChecked(false)
     setIsCorrect(null)
+    setHintRevealed(false)
   }, [])
 
   const registerListen = useCallback(() => {
@@ -97,17 +107,24 @@ export function useSentenceRunner(
 
   // Validates the current input against the expected sentence. A wrong result is recorded once per
   // distinct attempt (re-checking the same unedited text again doesn't pile up duplicate mistakes).
+  // A correct result replaces the learner's rough typing with the properly capitalized/punctuated
+  // sentence - normalizeForMatch ignores case and punctuation for grading, so what the learner typed
+  // ("its very big im a little nervous") and the canonical sentence ("It's very big! I'm a little
+  // nervous.") both count as correct, but only the canonical form should stick around on screen.
   const checkAnswer = useCallback(() => {
     if (!currentSentence) return
-    const correct = normalizeForMatch(input) === normalizeForMatch(currentSentence.text)
+    const expectedText = stripSpeakerLabel(currentSentence.text)
+    const correct = normalizeForMatch(input) === normalizeForMatch(expectedText)
     const isRepeatOfLastCheck = checked && input === lastCheckedInput
     setChecked(true)
     setIsCorrect(correct)
     setLastCheckedInput(input)
-    if (!correct && !isRepeatOfLastCheck) {
+    if (correct) {
+      setInput(expectedText)
+    } else if (!isRepeatOfLastCheck) {
       setMistakes((prev) => [
         ...prev,
-        { sentenceIndex: index, expectedText: currentSentence.text, attemptedText: input.trim() },
+        { sentenceIndex: index, expectedText, attemptedText: input.trim() },
       ])
     }
   }, [checked, currentSentence, index, input, lastCheckedInput])

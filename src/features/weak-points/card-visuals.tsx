@@ -6,7 +6,7 @@ type IconComponent = ComponentType<SVGProps<SVGSVGElement>>
 
 interface DomainVisual {
   icon: IconComponent
-  /** Tailwind classes for the round icon chip. Kept inside the existing blue-family
+  /** Tailwind classes for the round icon chip. Kept inside the existing teal-family
    * tokens (primary / secondary / foreground) so the three domains stay in the same
    * palette - the icon shape carries most of the differentiation, color is a second cue,
    * never the only one (see aria-label usage at the call sites). */

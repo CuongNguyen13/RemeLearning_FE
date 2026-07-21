@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
-import { useSentenceRunner } from "@/features/dictation/useSentenceRunner"
+import { stripSpeakerLabel, useSentenceRunner } from "@/features/dictation/useSentenceRunner"
 import { rawApiClient } from "@/lib/api-client"
 import { EASE_OUT } from "@/lib/motion"
 import { cn } from "@/lib/utils"
@@ -22,7 +22,9 @@ function estimateSentenceRange(
   index: number,
   durationSeconds: number
 ): { startMs: number; endMs: number } {
-  const wordCounts = sentences.map((s) => s.text.trim().split(/\s+/).filter(Boolean).length || 1)
+  const wordCounts = sentences.map(
+    (s) => stripSpeakerLabel(s.text).trim().split(/\s+/).filter(Boolean).length || 1
+  )
   const totalWords = wordCounts.reduce((sum, count) => sum + count, 0)
   const wordsBefore = wordCounts.slice(0, index).reduce((sum, count) => sum + count, 0)
   const wordsThroughCurrent = wordsBefore + wordCounts[index]
@@ -263,6 +265,7 @@ export function SentenceDictationRunner({
 
   const hintAlmostReady =
     !runner.hintUnlocked && runner.listenCount > 0 && runner.listenCount < minListensForHint
+  const translationAvailable = readyToAdvance && !!currentSentence.translation
 
   return (
     <div className="flex w-full max-w-2xl flex-col gap-5 rounded-2xl bg-card p-6 shadow-clay">
@@ -322,8 +325,14 @@ export function SentenceDictationRunner({
           {t("dictation.listenShortcutHint")}
         </p>
 
-        {/* Transcript input — reflects the last check's verdict until the learner edits again. */}
-        <div className="relative">
+        {/* Transcript input — reflects the last check's verdict until the learner edits again. A
+            correct check gets a brief scale pop so the learner's own answer momentarily stands out
+            before settling, instead of just quietly changing color. */}
+        <motion.div
+          className="relative"
+          animate={{ scale: readyToAdvance && !reduceMotion ? [1, 1.035, 1] : 1 }}
+          transition={{ duration: 0.35, ease: EASE_OUT }}
+        >
           <Input
             id="sentence-transcript-input"
             value={runner.input}
@@ -334,23 +343,27 @@ export function SentenceDictationRunner({
             disabled={readyToAdvance}
             className={cn(
               "h-12 text-base transition-all duration-150 ease-out motion-reduce:transition-none",
-              readyToAdvance && "border-primary/40 bg-primary/5 ring-2 ring-primary/20",
+              // Overrides the base Input's disabled:opacity-50 (and its bg) - without this the
+              // learner's own correct answer would look faded/washed-out right when it should
+              // read as the most prominent thing on screen.
+              readyToAdvance &&
+                "border-primary bg-primary/10 pr-28 text-lg font-semibold text-primary ring-2 ring-primary/30 disabled:bg-primary/10 disabled:opacity-100",
               showsIncorrect && "border-destructive/50 bg-destructive/5 ring-2 ring-destructive/20"
             )}
             autoFocus
           />
           {readyToAdvance && (
             <motion.span
-              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs font-semibold text-primary"
-              initial={{ opacity: 0, x: reduceMotion ? 0 : 8 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: reduceMotion ? 0 : 0.2, ease: EASE_OUT }}
+              className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground shadow-clay"
+              initial={{ opacity: 0, scale: reduceMotion ? 1 : 0.85, x: reduceMotion ? 0 : 8 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              transition={{ duration: reduceMotion ? 0 : 0.25, ease: EASE_OUT }}
             >
               <Check className="size-3.5" />
               {t("dictation.sentenceCorrect")}
             </motion.span>
           )}
-        </div>
+        </motion.div>
 
         {/* Incorrect-check feedback — explicit, persists until the learner edits or re-checks. */}
         {showsIncorrect && (
@@ -410,8 +423,9 @@ export function SentenceDictationRunner({
           </Button>
         </div>
 
-        {/* Hint reveal — slides down when toggled. Shows the answer text, plus its translation
-            (if one was generated for this sentence) right underneath. */}
+        {/* Hint reveal — slides down when toggled. Shows the answer text only; the translation is
+            reserved for after the learner actually gets the sentence right (see below), so a
+            peeked hint doesn't also hand over the translation. */}
         {runner.hintRevealed && (
           <motion.div
             className="flex flex-col gap-1.5 rounded-2xl bg-muted/50 p-4 text-sm leading-relaxed text-muted-foreground"
@@ -420,12 +434,19 @@ export function SentenceDictationRunner({
             transition={{ duration: reduceMotion ? 0 : 0.2, ease: EASE_OUT }}
           >
             <p>{currentSentence.text}</p>
-            {currentSentence.translation && (
-              <p className="border-t border-border/60 pt-1.5 text-xs italic">
-                <span className="not-italic font-medium">{t("dictation.translationLabel")}: </span>
-                {currentSentence.translation}
-              </p>
-            )}
+          </motion.div>
+        )}
+
+        {/* Translation reveal — only once the current sentence has been answered correctly. */}
+        {translationAvailable && (
+          <motion.div
+            className="rounded-2xl bg-muted/50 p-4 text-sm italic leading-relaxed text-muted-foreground"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            transition={{ duration: reduceMotion ? 0 : 0.2, ease: EASE_OUT }}
+          >
+            <span className="not-italic font-medium">{t("dictation.translationLabel")}: </span>
+            {currentSentence.translation}
           </motion.div>
         )}
       </motion.div>

@@ -3,7 +3,7 @@ import { Loader2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { AiSuggestions } from "@/features/dictation/AiSuggestions"
+import { AiAnalysisPanel } from "@/features/dictation/AiAnalysisPanel"
 import { useDictationAttemptDetail } from "@/features/dictation/hooks"
 
 interface AttemptDetailDialogProps {
@@ -78,7 +78,11 @@ export function AttemptDetailDialog({ userId, attemptId, onOpenChange }: Attempt
               </div>
             )}
 
-            {data.aiSuggestions.length > 0 && <AiSuggestions suggestions={data.aiSuggestions} />}
+            <AiAnalysisPanel
+              errorTable={data.errorTable}
+              rootCauses={data.rootCauses}
+              actionAdvice={data.actionAdvice}
+            />
           </div>
         )}
       </DialogContent>
