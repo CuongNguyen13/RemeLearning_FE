@@ -14,10 +14,39 @@ import type {
   DictationPracticeItem,
   DictationPracticeItemDetail,
   GenerateAiPracticeRequest,
+  GenerateGrammarPracticeRequest,
+  GenerateVocabPracticeRequest,
+  GrammarAttemptDetail,
+  GrammarAttemptHistoryEntry,
+  GrammarAttemptResult,
+  GrammarPracticeItem,
+  GenerateListeningPracticeRequest,
   LearnerOverview,
+  ListeningAttemptDetail,
+  ListeningAttemptHistoryEntry,
+  ListeningAttemptResult,
+  ListeningPracticeItem,
   PracticeRedoRequest,
   RecommendationsByCategory,
+  SectionAnswerResult,
+  SectionHistoryEntry,
+  SectionCard,
   StartDictationSessionRequest,
+  StartSectionRequest,
+  SubmitSectionAnswerRequest,
+  GenerateSpeakingPracticeRequest,
+  SpeakingAttemptDetail,
+  SpeakingAttemptHistoryEntry,
+  SpeakingAttemptResult,
+  SpeakingPracticeItem,
+  SubmitGrammarAttemptRequest,
+  SubmitListeningAttemptRequest,
+  SubmitVocabAttemptRequest,
+  VocabAttemptDetail,
+  VocabAttemptHistoryEntry,
+  VocabAttemptResult,
+  VocabPracticeItem,
+  VocabTopicSummary,
   WeakPoint,
   WeakPointsByCategory,
 } from "@/types/api"
@@ -213,6 +242,330 @@ export async function getAiPracticeDetail(
     `/learners/${userId}/dictation/ai-practice/items/${practiceItemId}/detail`
   )
   return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/vocabulary/generate - generate one AI vocabulary practice
+// set, targeting the given focus words or (if omitted) the learner's own top weak points.
+export async function generateVocabPractice(
+  userId: string,
+  request: GenerateVocabPracticeRequest
+): Promise<VocabPracticeItem> {
+  const { data } = await apiClient.post<ApiResponse<VocabPracticeItem>>(
+    `/learners/${userId}/learn/vocabulary/generate`,
+    request
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/vocabulary/items - a learner's generated practice sets.
+export async function getVocabPracticeItems(userId: string): Promise<VocabPracticeItem[]> {
+  const { data } = await apiClient.get<ApiResponse<VocabPracticeItem[]>>(
+    `/learners/${userId}/learn/vocabulary/items`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/vocabulary/items/{itemId} - full detail (no answers).
+export async function getVocabPracticeItem(
+  userId: string,
+  itemId: number
+): Promise<VocabPracticeItem> {
+  const { data } = await apiClient.get<ApiResponse<VocabPracticeItem>>(
+    `/learners/${userId}/learn/vocabulary/items/${itemId}`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/vocabulary/attempts - grade a submitted attempt.
+export async function submitVocabAttempt(
+  userId: string,
+  payload: SubmitVocabAttemptRequest
+): Promise<VocabAttemptResult> {
+  const { data } = await apiClient.post<ApiResponse<VocabAttemptResult>>(
+    `/learners/${userId}/learn/vocabulary/attempts`,
+    payload
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/vocabulary/history - past attempts, newest first.
+export async function getVocabPracticeHistory(userId: string): Promise<VocabAttemptHistoryEntry[]> {
+  const { data } = await apiClient.get<ApiResponse<VocabAttemptHistoryEntry[]>>(
+    `/learners/${userId}/learn/vocabulary/history`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/vocabulary/history/{attemptId} - full detail for one past attempt.
+export async function getVocabAttemptDetail(
+  userId: string,
+  attemptId: number
+): Promise<VocabAttemptDetail> {
+  const { data } = await apiClient.get<ApiResponse<VocabAttemptDetail>>(
+    `/learners/${userId}/learn/vocabulary/history/${attemptId}`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/vocabulary/library/topics - topics + this learner's mastery.
+export async function getVocabLibraryTopics(userId: string): Promise<VocabTopicSummary[]> {
+  const { data } = await apiClient.get<ApiResponse<VocabTopicSummary[]>>(
+    `/learners/${userId}/learn/vocabulary/library/topics`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/vocabulary/library/topics/{topicId}/sections - start a Section.
+export async function startVocabSection(
+  userId: string,
+  topicId: number,
+  request: StartSectionRequest
+): Promise<SectionCard> {
+  const { data } = await apiClient.post<ApiResponse<SectionCard>>(
+    `/learners/${userId}/learn/vocabulary/library/topics/${topicId}/sections`,
+    request
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/vocabulary/library/sections/{sectionId}/answers - submit one card's answer.
+export async function submitVocabSectionAnswer(
+  userId: string,
+  sectionId: number,
+  request: SubmitSectionAnswerRequest
+): Promise<SectionAnswerResult> {
+  const { data } = await apiClient.post<ApiResponse<SectionAnswerResult>>(
+    `/learners/${userId}/learn/vocabulary/library/sections/${sectionId}/answers`,
+    request
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/vocabulary/library/sections/{sectionId}/finish - end a Section early.
+export async function finishVocabSection(userId: string, sectionId: number): Promise<SectionAnswerResult> {
+  const { data } = await apiClient.post<ApiResponse<SectionAnswerResult>>(
+    `/learners/${userId}/learn/vocabulary/library/sections/${sectionId}/finish`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/vocabulary/library/sections/history - past Sections, newest first.
+export async function getVocabSectionHistory(userId: string): Promise<SectionHistoryEntry[]> {
+  const { data } = await apiClient.get<ApiResponse<SectionHistoryEntry[]>>(
+    `/learners/${userId}/learn/vocabulary/library/sections/history`
+  )
+  return unwrap(data)
+}
+
+// Not an axios call - builds the same-origin URL an <audio> element's src can hit directly (proxied
+// by Vite/prod routing straight to bff-service, matching this exact bff route from Step above).
+export function getVocabLibraryWordAudioUrl(userId: string, wordId: number): string {
+  return `/api/v1/learners/${userId}/learn/vocabulary/library/words/${wordId}/audio`
+}
+
+// POST /api/v1/learners/{userId}/learn/grammar/generate - generate one AI grammar practice set,
+// targeting the given focus rules or (if omitted) the learner's own top weak points.
+export async function generateGrammarPractice(
+  userId: string,
+  request: GenerateGrammarPracticeRequest
+): Promise<GrammarPracticeItem> {
+  const { data } = await apiClient.post<ApiResponse<GrammarPracticeItem>>(
+    `/learners/${userId}/learn/grammar/generate`,
+    request
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/grammar/items - a learner's generated practice sets.
+export async function getGrammarPracticeItems(userId: string): Promise<GrammarPracticeItem[]> {
+  const { data } = await apiClient.get<ApiResponse<GrammarPracticeItem[]>>(
+    `/learners/${userId}/learn/grammar/items`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/grammar/items/{itemId} - full detail (no answers).
+export async function getGrammarPracticeItem(
+  userId: string,
+  itemId: number
+): Promise<GrammarPracticeItem> {
+  const { data } = await apiClient.get<ApiResponse<GrammarPracticeItem>>(
+    `/learners/${userId}/learn/grammar/items/${itemId}`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/grammar/attempts - grade a submitted attempt.
+export async function submitGrammarAttempt(
+  userId: string,
+  payload: SubmitGrammarAttemptRequest
+): Promise<GrammarAttemptResult> {
+  const { data } = await apiClient.post<ApiResponse<GrammarAttemptResult>>(
+    `/learners/${userId}/learn/grammar/attempts`,
+    payload
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/grammar/history - past attempts, newest first.
+export async function getGrammarPracticeHistory(userId: string): Promise<GrammarAttemptHistoryEntry[]> {
+  const { data } = await apiClient.get<ApiResponse<GrammarAttemptHistoryEntry[]>>(
+    `/learners/${userId}/learn/grammar/history`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/grammar/history/{attemptId} - full detail for one past attempt.
+export async function getGrammarAttemptDetail(
+  userId: string,
+  attemptId: number
+): Promise<GrammarAttemptDetail> {
+  const { data } = await apiClient.get<ApiResponse<GrammarAttemptDetail>>(
+    `/learners/${userId}/learn/grammar/history/${attemptId}`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/listening/generate - generate one AI listening passage,
+// targeting the given focus keywords or (if omitted) the learner's own recently-missed keywords.
+export async function generateListeningPractice(
+  userId: string,
+  request: GenerateListeningPracticeRequest
+): Promise<ListeningPracticeItem> {
+  const { data } = await apiClient.post<ApiResponse<ListeningPracticeItem>>(
+    `/learners/${userId}/learn/listening/generate`,
+    request
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/listening/items - a learner's generated practice items.
+export async function getListeningPracticeItems(userId: string): Promise<ListeningPracticeItem[]> {
+  const { data } = await apiClient.get<ApiResponse<ListeningPracticeItem[]>>(
+    `/learners/${userId}/learn/listening/items`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/listening/items/{itemId} - full detail (no transcript/answers).
+export async function getListeningPracticeItem(
+  userId: string,
+  itemId: number
+): Promise<ListeningPracticeItem> {
+  const { data } = await apiClient.get<ApiResponse<ListeningPracticeItem>>(
+    `/learners/${userId}/learn/listening/items/${itemId}`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/listening/attempts - grade a submitted attempt.
+export async function submitListeningAttempt(
+  userId: string,
+  payload: SubmitListeningAttemptRequest
+): Promise<ListeningAttemptResult> {
+  const { data } = await apiClient.post<ApiResponse<ListeningAttemptResult>>(
+    `/learners/${userId}/learn/listening/attempts`,
+    payload
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/listening/history - past attempts, newest first.
+export async function getListeningPracticeHistory(userId: string): Promise<ListeningAttemptHistoryEntry[]> {
+  const { data } = await apiClient.get<ApiResponse<ListeningAttemptHistoryEntry[]>>(
+    `/learners/${userId}/learn/listening/history`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/listening/history/{attemptId} - full detail for one past attempt.
+export async function getListeningAttemptDetail(
+  userId: string,
+  attemptId: number
+): Promise<ListeningAttemptDetail> {
+  const { data } = await apiClient.get<ApiResponse<ListeningAttemptDetail>>(
+    `/learners/${userId}/learn/listening/history/${attemptId}`
+  )
+  return unwrap(data)
+}
+
+// Absolute URL for one listening practice item's synthesized audio stream.
+export function listeningPracticeAudioUrl(userId: string, itemId: number): string {
+  return `${apiBaseUrl}/learners/${userId}/learn/listening/items/${itemId}/audio`
+}
+
+// POST /api/v1/learners/{userId}/learn/speaking/generate - generate one AI speaking-practice
+// sentence with a Supertonic sample recording, targeting the given focus words or (if omitted)
+// the learner's own top pronunciation weak points.
+export async function generateSpeakingPractice(
+  userId: string,
+  request: GenerateSpeakingPracticeRequest
+): Promise<SpeakingPracticeItem> {
+  const { data } = await apiClient.post<ApiResponse<SpeakingPracticeItem>>(
+    `/learners/${userId}/learn/speaking/generate`,
+    request
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/speaking/items - a learner's generated practice items.
+export async function getSpeakingPracticeItems(userId: string): Promise<SpeakingPracticeItem[]> {
+  const { data } = await apiClient.get<ApiResponse<SpeakingPracticeItem[]>>(
+    `/learners/${userId}/learn/speaking/items`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/speaking/items/{itemId} - full detail (target text + sample audio).
+export async function getSpeakingPracticeItem(
+  userId: string,
+  itemId: number
+): Promise<SpeakingPracticeItem> {
+  const { data } = await apiClient.get<ApiResponse<SpeakingPracticeItem>>(
+    `/learners/${userId}/learn/speaking/items/${itemId}`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/speaking/attempts - submit a learner's recorded attempt
+// (multipart audio), scored via ai-service's wav2vec2 GOP model.
+export async function submitSpeakingAttempt(
+  userId: string,
+  practiceItemId: number,
+  audio: Blob
+): Promise<SpeakingAttemptResult> {
+  const formData = new FormData()
+  formData.append("audio", audio, "attempt.webm")
+  formData.append("practiceItemId", String(practiceItemId))
+  const { data } = await apiClient.post<ApiResponse<SpeakingAttemptResult>>(
+    `/learners/${userId}/learn/speaking/attempts`,
+    formData
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/speaking/history - past attempts, newest first.
+export async function getSpeakingPracticeHistory(userId: string): Promise<SpeakingAttemptHistoryEntry[]> {
+  const { data } = await apiClient.get<ApiResponse<SpeakingAttemptHistoryEntry[]>>(
+    `/learners/${userId}/learn/speaking/history`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/speaking/history/{attemptId} - full detail for one past attempt.
+export async function getSpeakingAttemptDetail(
+  userId: string,
+  attemptId: number
+): Promise<SpeakingAttemptDetail> {
+  const { data } = await apiClient.get<ApiResponse<SpeakingAttemptDetail>>(
+    `/learners/${userId}/learn/speaking/history/${attemptId}`
+  )
+  return unwrap(data)
+}
+
+// Absolute URL for one speaking practice item's Supertonic sample audio stream.
+export function speakingSampleAudioUrl(userId: string, itemId: number): string {
+  return `${apiBaseUrl}/learners/${userId}/learn/speaking/items/${itemId}/sample-audio`
 }
 
 // Absolute URL for a library clip's audio stream, for use directly in an <audio src>.

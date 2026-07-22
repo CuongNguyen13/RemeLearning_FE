@@ -10,7 +10,7 @@ export interface ApiResponse<T> {
   timestamp: string
 }
 
-export type Category = "vocabulary" | "grammar" | "pronunciation"
+export type Category = "vocabulary" | "grammar" | "pronunciation" | "listening"
 
 export interface User {
   userId: string
@@ -310,4 +310,356 @@ export interface GenerateAiPracticeRequest {
   level?: string
   examType?: string
   translationLang?: string
+}
+
+// --- "Học & Luyện tập với AI" - vocabulary skill ---
+
+export type VocabQuestionType = "CLOZE" | "MCQ" | "MATCHING"
+
+/** Public-facing question shape - never carries the answer, so the client can't cheat. */
+export interface VocabQuestion {
+  index: number
+  prompt: string
+  type: VocabQuestionType
+  /** null for CLOZE; the answer/distractor choices for MCQ/MATCHING. */
+  options: string[] | null
+}
+
+export interface VocabPracticeItem {
+  practiceItemId: number
+  level: string | null
+  examType: string | null
+  topic: string | null
+  targetWords: string[]
+  questions: VocabQuestion[]
+  createdAt: string
+}
+
+export interface GenerateVocabPracticeRequest {
+  level?: string
+  examType?: string
+  focusItems?: string[]
+}
+
+export interface SubmitVocabAttemptRequest {
+  practiceItemId: number
+  answers: string[]
+}
+
+/** One graded question, revealed after submission - unlike VocabQuestion, includes the answer. */
+export interface VocabAttemptQuestionResult {
+  index: number
+  prompt: string
+  yourAnswer: string | null
+  correctAnswer: string
+  correct: boolean
+  translation: string | null
+}
+
+export interface VocabAttemptResult {
+  accuracy: number
+  results: VocabAttemptQuestionResult[]
+  actionAdvice: string[]
+}
+
+export interface VocabAttemptHistoryEntry {
+  attemptId: number
+  practiceItemId: number
+  level: string | null
+  examType: string | null
+  topic: string | null
+  score: number
+  attemptedAt: string
+}
+
+export interface VocabAttemptDetail {
+  attemptId: number
+  level: string | null
+  examType: string | null
+  topic: string | null
+  accuracy: number
+  results: VocabAttemptQuestionResult[]
+  attemptedAt: string
+}
+
+// --- Vocabulary library: topic word bank + Leitner-lite Section practice ---
+
+export type SectionCardKind = "INTRO" | "QUIZ"
+
+export type SectionExerciseType =
+  | "MCQ"
+  | "CLOZE"
+  | "MATCHING"
+  | "LISTENING_DICTATION"
+  | "TRANSLATE_EN_TO_VI"
+  | "TRANSLATE_VI_TO_EN"
+
+export interface VocabTopicSummary {
+  topicId: number
+  code: string
+  name: string
+  description: string | null
+  level: string | null
+  wordCount: number
+  masteredCount: number
+}
+
+export interface SectionProgress {
+  totalWords: number
+  wordsMastered: number
+  wordsRemaining: number
+}
+
+/** One Section card - an unscored INTRO flashcard, or a graded QUIZ of one SectionExerciseType.
+ *  Fields are populated only where doing so cannot leak the answer - see the BE design spec. */
+export interface SectionCard {
+  sectionId: number
+  cardKind: SectionCardKind
+  libraryWordId: number
+  word: string | null
+  meaningVi: string | null
+  exampleEn: string | null
+  audioUrl: string | null
+  exerciseType: SectionExerciseType | null
+  prompt: string | null
+  options: string[] | null
+  progress: SectionProgress
+}
+
+export interface StartSectionRequest {
+  sectionSize?: number
+}
+
+/** Omit/blank submittedAnswer to acknowledge an INTRO card. */
+export interface SubmitSectionAnswerRequest {
+  submittedAnswer?: string
+}
+
+export interface SectionAnswerResult {
+  correct: boolean
+  correctAnswer: string | null
+  score: number
+  completed: boolean
+  nextCard: SectionCard | null
+  progress: SectionProgress
+}
+
+export interface SectionHistoryEntry {
+  sectionAttemptId: number
+  topicName: string | null
+  accuracy: number
+  wordsCount: number
+  completedAt: string | null
+}
+
+// --- "Học & Luyện tập với AI" - grammar skill ---
+
+export type GrammarQuestionType = "ERROR_CORRECTION" | "FILL_TENSE" | "TRANSFORM" | "MCQ"
+
+/** Public-facing question shape - never carries the answer, so the client can't cheat. */
+export interface GrammarQuestion {
+  index: number
+  prompt: string
+  type: GrammarQuestionType
+  /** null for ERROR_CORRECTION/FILL_TENSE/TRANSFORM; the choices for MCQ. */
+  options: string[] | null
+}
+
+export interface GrammarPracticeItem {
+  practiceItemId: number
+  level: string | null
+  examType: string | null
+  topic: string | null
+  targetRules: string[]
+  questions: GrammarQuestion[]
+  createdAt: string
+}
+
+export interface GenerateGrammarPracticeRequest {
+  level?: string
+  examType?: string
+  focusItems?: string[]
+}
+
+export interface SubmitGrammarAttemptRequest {
+  practiceItemId: number
+  answers: string[]
+}
+
+/** One graded question, revealed after submission - unlike GrammarQuestion, includes the answer. */
+export interface GrammarAttemptQuestionResult {
+  index: number
+  prompt: string
+  yourAnswer: string | null
+  correctAnswer: string
+  correct: boolean
+  translation: string | null
+}
+
+export interface GrammarAttemptResult {
+  accuracy: number
+  results: GrammarAttemptQuestionResult[]
+  actionAdvice: string[]
+}
+
+export interface GrammarAttemptHistoryEntry {
+  attemptId: number
+  practiceItemId: number
+  level: string | null
+  examType: string | null
+  topic: string | null
+  score: number
+  attemptedAt: string
+}
+
+export interface GrammarAttemptDetail {
+  attemptId: number
+  level: string | null
+  examType: string | null
+  topic: string | null
+  accuracy: number
+  results: GrammarAttemptQuestionResult[]
+  attemptedAt: string
+}
+
+// --- "Học & Luyện tập với AI" - listening skill ---
+
+export type ListeningQuestionType = "MCQ" | "KEYWORD" | "OPEN"
+
+/** Practice-time shape - never carries the transcript/answer (revealed only after grading). */
+export interface ListeningQuestion {
+  index: number
+  prompt: string
+  type: ListeningQuestionType
+  /** Choices for MCQ; null for KEYWORD/OPEN. */
+  options: string[] | null
+}
+
+export interface ListeningPracticeItem {
+  practiceItemId: number
+  /** Null until Supertonic has finished synthesizing the audio. */
+  audioUrl: string | null
+  level: string | null
+  examType: string | null
+  topic: string | null
+  questions: ListeningQuestion[]
+  createdAt: string
+}
+
+export interface GenerateListeningPracticeRequest {
+  level?: string
+  examType?: string
+  translationLang?: string
+  focusItems?: string[]
+}
+
+export interface SubmitListeningAttemptRequest {
+  practiceItemId: number
+  answers: string[]
+}
+
+export interface ListeningAttemptQuestionResult {
+  index: number
+  prompt: string
+  yourAnswer: string | null
+  correctAnswer: string
+  correct: boolean
+  /** 0..1 partial credit - meaningful for KEYWORD/OPEN; 0 or 1 for MCQ. */
+  subScore: number
+  explanation: string | null
+}
+
+export interface ListeningAttemptResult {
+  accuracy: number
+  results: ListeningAttemptQuestionResult[]
+  transcript: string
+  translation: string | null
+  actionAdvice: string[]
+}
+
+export interface ListeningAttemptHistoryEntry {
+  attemptId: number
+  practiceItemId: number
+  level: string | null
+  examType: string | null
+  topic: string | null
+  score: number
+  attemptedAt: string
+}
+
+export interface ListeningAttemptDetail {
+  attemptId: number
+  level: string | null
+  examType: string | null
+  topic: string | null
+  accuracy: number
+  results: ListeningAttemptQuestionResult[]
+  transcript: string
+  translation: string | null
+  attemptedAt: string
+}
+
+// --- "Học & Luyện tập với AI" - speaking/pronunciation skill ---
+
+export interface PhonemeScore {
+  ipa: string
+  score: number
+}
+
+export interface WordScore {
+  word: string
+  score: number
+  phonemes: PhonemeScore[]
+}
+
+/** Unlike vocabulary/grammar/listening, the target text is shown upfront - speaking practice is
+ * about pronouncing known text, not testing comprehension. */
+export interface SpeakingPracticeItem {
+  practiceItemId: number
+  /** Null until Supertonic has finished synthesizing the sample (model) audio. */
+  sampleAudioUrl: string | null
+  level: string | null
+  examType: string | null
+  topic: string | null
+  targetText: string
+  translation: string | null
+  createdAt: string
+}
+
+export interface GenerateSpeakingPracticeRequest {
+  level?: string
+  examType?: string
+  focusItems?: string[]
+}
+
+export interface SpeakingAttemptResult {
+  overall: number
+  words: WordScore[]
+  /** What the learner actually said, per ai-service's own ASR pass. */
+  transcript: string
+  weakPhonemes: string[]
+  actionAdvice: string[]
+}
+
+export interface SpeakingAttemptHistoryEntry {
+  attemptId: number
+  practiceItemId: number
+  level: string | null
+  examType: string | null
+  topic: string | null
+  overallScore: number
+  attemptedAt: string
+}
+
+export interface SpeakingAttemptDetail {
+  attemptId: number
+  level: string | null
+  examType: string | null
+  topic: string | null
+  targetText: string
+  overallScore: number
+  words: WordScore[]
+  transcript: string
+  weakPhonemes: string[]
+  attemptedAt: string
 }
