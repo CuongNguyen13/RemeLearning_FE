@@ -19,7 +19,8 @@
   "categories": {
     "vocabulary": "Từ vựng",
     "grammar": "Ngữ pháp",
-    "pronunciation": "Phát âm"
+    "pronunciation": "Phát âm",
+    "listening": "Nghe hiểu"
   },
   "nav": {
     "dashboard": "Tổng quan",
@@ -30,6 +31,11 @@
     "dictation": "Nghe chép chính tả",
     "profile": "Hồ sơ",
     "groupPractice": "Rèn luyện",
+    "groupLearn": "Học & luyện tập",
+    "learnVocabulary": "Từ vựng",
+    "learnGrammar": "Ngữ pháp",
+    "learnListening": "Nghe hiểu",
+    "learnSpeaking": "Nói/Phát âm",
     "primaryNavigation": "Điều hướng chính",
     "openMenu": "Mở menu",
     "closeMenu": "Đóng menu"
@@ -134,7 +140,8 @@
     "exercises": "Bài tập đề xuất",
     "updated": "Cập nhật {{time}}",
     "emptyTitle": "Chưa có gợi ý nào trong {{category}}",
-    "emptyDescription": "Gợi ý sẽ xuất hiện khi hệ thống phát hiện một điểm yếu lặp lại hoặc đang phai dần ở đây - hãy quay lại sau lần ghi âm tiếp theo."
+    "emptyDescription": "Gợi ý sẽ xuất hiện khi hệ thống phát hiện một điểm yếu lặp lại hoặc đang phai dần ở đây - hãy quay lại sau lần ghi âm tiếp theo.",
+    "practiceNow": "Luyện ngay"
   },
   "practice": {
     "title": "Luyện tập",
@@ -272,6 +279,108 @@
     "submitError": "Không thể chấm điểm bài làm này",
     "goToAi": "Luyện tập với AI",
     "historyRedo": "Làm lại"
+  },
+  "learn": {
+    "comingSoon": "Đang phát triển",
+    "tabs": {
+      "practice": "Luyện tập",
+      "history": "Lịch sử",
+      "library": "Thư viện"
+    },
+    "vocabulary": {
+      "title": "Luyện từ vựng",
+      "subtitle": "Bài luyện điền từ/chọn đáp án/nối nghĩa do AI sinh, nhắm đúng các từ bạn còn yếu",
+      "emptyTitle": "Chưa có bài luyện nào",
+      "emptyDescription": "Tạo một bài luyện, AI sẽ nhắm vào các từ bạn còn yếu, hoặc tự chọn bộ từ phù hợp trình độ.",
+      "question": "Câu {{number}}",
+      "yourAnswer": "Câu trả lời của bạn",
+      "submit": "Nộp bài",
+      "yourAnswerWas": "Bạn đã trả lời: {{answer}}",
+      "correctAnswerIs": "Đáp án đúng: {{answer}}",
+      "noAnswer": "(chưa trả lời)",
+      "noHistory": "Chưa có lượt luyện nào - hãy tạo một bài luyện để bắt đầu.",
+      "library": {
+        "emptyTitle": "Chưa có chủ đề nào",
+        "startError": "Không thể bắt đầu luyện tập. Vui lòng thử lại.",
+        "answerError": "Không thể gửi câu trả lời. Vui lòng thử lại.",
+        "startSection": "Bắt đầu luyện tập",
+        "masteredOf": "Đã thạo {{mastered}}/{{total}} từ",
+        "progress": "{{mastered}}/{{total}} từ đã thạo",
+        "newWord": "Từ mới",
+        "gotIt": "Đã hiểu",
+        "typeAnswer": "Nhập câu trả lời...",
+        "submit": "Gửi",
+        "correctToast": "Chính xác!",
+        "wrongToast": "Chưa đúng. Đáp án: {{answer}}",
+        "sectionDoneTitle": "Hoàn thành!",
+        "sectionDoneSubtitle": "Bạn đã luyện xong {{count}} từ trong lượt này.",
+        "backToTopics": "Quay lại danh sách chủ đề"
+      }
+    },
+    "grammar": {
+      "title": "Luyện ngữ pháp",
+      "subtitle": "Bài luyện sửa lỗi/chia thì/biến đổi câu/chọn đáp án do AI sinh, nhắm đúng các quy tắc bạn còn yếu",
+      "emptyTitle": "Chưa có bài luyện nào",
+      "emptyDescription": "Tạo một bài luyện, AI sẽ nhắm vào các quy tắc ngữ pháp bạn còn yếu, hoặc tự chọn bộ bài phù hợp trình độ.",
+      "question": "Câu {{number}}",
+      "yourAnswer": "Câu trả lời của bạn",
+      "submit": "Nộp bài",
+      "yourAnswerWas": "Bạn đã trả lời: {{answer}}",
+      "correctAnswerIs": "Đáp án đúng: {{answer}}",
+      "noAnswer": "(chưa trả lời)",
+      "noHistory": "Chưa có lượt luyện nào - hãy tạo một bài luyện để bắt đầu."
+    },
+    "listening": {
+      "title": "Luyện nghe hiểu",
+      "subtitle": "Đoạn audio do AI sinh kèm câu hỏi trắc nghiệm, điền từ khóa và tự luận",
+      "emptyTitle": "Chưa có bài luyện nào",
+      "emptyDescription": "Tạo một bài luyện, AI sẽ nhắm vào các từ khóa bạn từng nghe sai, hoặc tự chọn chủ đề phù hợp trình độ.",
+      "audioLabel": "Nghe đoạn audio",
+      "audioUnsupported": "Trình duyệt của bạn không hỗ trợ phát audio.",
+      "question": "Câu {{number}}",
+      "keywordAnswer": "Điền từ/cụm từ bạn nghe được",
+      "openAnswer": "Câu trả lời của bạn",
+      "submit": "Nộp bài",
+      "yourAnswerWas": "Bạn đã trả lời: {{answer}}",
+      "correctAnswerIs": "Đáp án đúng: {{answer}}",
+      "noAnswer": "(chưa trả lời)",
+      "transcript": "Bản ghi lời (transcript)",
+      "noHistory": "Chưa có lượt luyện nào - hãy tạo một bài luyện để bắt đầu."
+    },
+    "speaking": {
+      "title": "Luyện nói/phát âm",
+      "subtitle": "Đọc to câu do Supertonic đọc mẫu và nhận phản hồi phát âm theo từng âm vị",
+      "emptyTitle": "Chưa có câu luyện nào",
+      "emptyDescription": "Tạo một câu luyện, AI sẽ nhắm vào các âm bạn còn yếu, hoặc tự chọn câu phù hợp trình độ.",
+      "sampleAudio": "Nghe mẫu",
+      "startRecording": "Bắt đầu ghi âm",
+      "stopRecording": "Dừng ghi âm",
+      "reRecord": "Ghi âm lại",
+      "micError": "Không truy cập được microphone. Vui lòng kiểm tra quyền truy cập.",
+      "submit": "Nộp bài",
+      "yourTranscript": "Bạn đã nói",
+      "weakPhonemes": "Âm còn yếu",
+      "noHistory": "Chưa có lượt luyện nào - hãy tạo một câu luyện để bắt đầu."
+    },
+    "generateDialog": {
+      "title": "Tạo bài luyện",
+      "trigger": "Tạo bài luyện",
+      "levelLabel": "Trình độ",
+      "examTypeLabel": "Dạng đề",
+      "examTypePlaceholder": "vd: TOEIC, IELTS...",
+      "random": "Ngẫu nhiên",
+      "noPreference": "Không chọn (AI tự chọn)",
+      "submit": "Tạo bài luyện",
+      "error": "Không tạo được bài luyện"
+    },
+    "result": {
+      "feedbackGreat": "Làm tốt lắm!",
+      "feedbackRetry": "Gần đúng rồi - tiếp tục luyện tập nhé",
+      "score": "Điểm số: {{percent}}%",
+      "retry": "Luyện tiếp",
+      "advice": "Gợi ý ôn tập",
+      "submitError": "Không nộp được bài luyện"
+    }
   },
   "profile": {
     "title": "Hồ sơ",

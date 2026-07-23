@@ -19,7 +19,8 @@
   "categories": {
     "vocabulary": "Vocabulary",
     "grammar": "Grammar",
-    "pronunciation": "Pronunciation"
+    "pronunciation": "Pronunciation",
+    "listening": "Listening"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -30,6 +31,11 @@
     "dictation": "Dictation",
     "profile": "Profile",
     "groupPractice": "Sharpen",
+    "groupLearn": "Learn & practice",
+    "learnVocabulary": "Vocabulary",
+    "learnGrammar": "Grammar",
+    "learnListening": "Listening",
+    "learnSpeaking": "Speaking",
     "primaryNavigation": "Primary navigation",
     "openMenu": "Open menu",
     "closeMenu": "Close menu"
@@ -134,7 +140,8 @@
     "exercises": "Suggested exercises",
     "updated": "Updated {{time}}",
     "emptyTitle": "No recommendations in {{category}} yet",
-    "emptyDescription": "Recommendations appear once we spot a recurring or fading weak point here - check back after your next recording."
+    "emptyDescription": "Recommendations appear once we spot a recurring or fading weak point here - check back after your next recording.",
+    "practiceNow": "Practice now"
   },
   "practice": {
     "title": "Practice",
@@ -272,6 +279,108 @@
     "submitError": "Couldn't grade this attempt",
     "goToAi": "Practice with AI",
     "historyRedo": "Redo"
+  },
+  "learn": {
+    "comingSoon": "Coming soon",
+    "tabs": {
+      "practice": "Practice",
+      "history": "History",
+      "library": "Library"
+    },
+    "vocabulary": {
+      "title": "Vocabulary practice",
+      "subtitle": "AI-generated cloze/multiple-choice/matching drills targeting your own weak words",
+      "emptyTitle": "No practice set yet",
+      "emptyDescription": "Create one and we'll target your own weak words, or let AI pick a level-appropriate set for you.",
+      "question": "Question {{number}}",
+      "yourAnswer": "Your answer",
+      "submit": "Submit",
+      "yourAnswerWas": "You answered: {{answer}}",
+      "correctAnswerIs": "Correct answer: {{answer}}",
+      "noAnswer": "(no answer)",
+      "noHistory": "No attempts yet - create a practice set to get started.",
+      "library": {
+        "emptyTitle": "No topics yet",
+        "startError": "Could not start practice. Please try again.",
+        "answerError": "Could not submit your answer. Please try again.",
+        "startSection": "Start practice",
+        "masteredOf": "{{mastered}}/{{total}} words mastered",
+        "progress": "{{mastered}}/{{total}} words mastered",
+        "newWord": "New word",
+        "gotIt": "Got it",
+        "typeAnswer": "Type your answer...",
+        "submit": "Submit",
+        "correctToast": "Correct!",
+        "wrongToast": "Not quite. Answer: {{answer}}",
+        "sectionDoneTitle": "Done!",
+        "sectionDoneSubtitle": "You practiced {{count}} words this round.",
+        "backToTopics": "Back to topics"
+      }
+    },
+    "grammar": {
+      "title": "Grammar practice",
+      "subtitle": "AI-generated error-correction/fill-in-tense/transform/MCQ drills targeting your own weak rules",
+      "emptyTitle": "No practice set yet",
+      "emptyDescription": "Create one and we'll target your own weak grammar rules, or let AI pick a level-appropriate set for you.",
+      "question": "Question {{number}}",
+      "yourAnswer": "Your answer",
+      "submit": "Submit",
+      "yourAnswerWas": "You answered: {{answer}}",
+      "correctAnswerIs": "Correct answer: {{answer}}",
+      "noAnswer": "(no answer)",
+      "noHistory": "No attempts yet - create a practice set to get started."
+    },
+    "listening": {
+      "title": "Listening practice",
+      "subtitle": "AI-generated audio passages with multiple-choice, keyword, and open-response questions",
+      "emptyTitle": "No practice item yet",
+      "emptyDescription": "Create one and we'll target your own recently-missed keywords, or let AI pick a level-appropriate topic for you.",
+      "audioLabel": "Listen to the passage",
+      "audioUnsupported": "Your browser does not support audio playback.",
+      "question": "Question {{number}}",
+      "keywordAnswer": "Type the word/phrase you heard",
+      "openAnswer": "Your response",
+      "submit": "Submit",
+      "yourAnswerWas": "You answered: {{answer}}",
+      "correctAnswerIs": "Correct answer: {{answer}}",
+      "noAnswer": "(no answer)",
+      "transcript": "Transcript",
+      "noHistory": "No attempts yet - create a practice item to get started."
+    },
+    "speaking": {
+      "title": "Speaking practice",
+      "subtitle": "Read a Supertonic-voiced sentence aloud and get phoneme-level pronunciation feedback",
+      "emptyTitle": "No practice sentence yet",
+      "emptyDescription": "Create one and we'll target your own weak sounds, or let AI pick a level-appropriate sentence for you.",
+      "sampleAudio": "Sample pronunciation",
+      "startRecording": "Start recording",
+      "stopRecording": "Stop recording",
+      "reRecord": "Re-record",
+      "micError": "Couldn't access your microphone. Please check permissions.",
+      "submit": "Submit",
+      "yourTranscript": "What you said",
+      "weakPhonemes": "Weak sounds",
+      "noHistory": "No attempts yet - create a practice sentence to get started."
+    },
+    "generateDialog": {
+      "title": "Create practice",
+      "trigger": "Create practice",
+      "levelLabel": "Level",
+      "examTypeLabel": "Exam type",
+      "examTypePlaceholder": "e.g. TOEIC, IELTS...",
+      "random": "Random",
+      "noPreference": "No preference (AI picks)",
+      "submit": "Create practice",
+      "error": "Failed to create practice set"
+    },
+    "result": {
+      "feedbackGreat": "Great work!",
+      "feedbackRetry": "Close - keep practicing",
+      "score": "Score: {{percent}}%",
+      "retry": "Practice more",
+      "advice": "Suggested advice",
+      "submitError": "Failed to submit attempt"
+    }
   },
   "profile": {
     "title": "Profile",
