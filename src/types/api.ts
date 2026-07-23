@@ -866,7 +866,7 @@ export interface SpeakingLibrarySection {
 /** Scoring result for one recorded sentence attempt - unlike the non-library flow's
  *  SpeakingAttemptResult, there's no per-word/phoneme breakdown, just this sentence's phoneme/word
  *  scores and pass/fail. Does not itself affect topic gating (see FinishSpeakingSectionResult). */
-export interface SentenceAttemptResult {
+export interface SpeakingSentenceAttemptResult {
   sentenceId: number
   phonemeScore: number
   wordScore: number

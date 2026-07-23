@@ -4,7 +4,7 @@ import {
   getSpeakingLibraryHistory,
   getSpeakingLibraryTopics,
   startSpeakingLibrarySection,
-  submitSentenceAttempt,
+  submitSpeakingSentenceAttempt,
 } from "@/api/learners"
 
 function topicsKey(userId: string) {
@@ -32,7 +32,7 @@ export function useStartSpeakingLibrarySection(userId: string) {
 // A per-sentence attempt never itself changes topic gating - only finishing the section can pass
 // the topic and unlock the next one (see useFinishSpeakingSection) - so no query invalidation
 // happens here.
-export function useSubmitSentenceAttempt(userId: string) {
+export function useSubmitSpeakingSentenceAttempt(userId: string) {
   return useMutation({
     mutationFn: ({
       sectionId,
@@ -42,7 +42,7 @@ export function useSubmitSentenceAttempt(userId: string) {
       sectionId: number
       sentenceId: number
       audio: Blob
-    }) => submitSentenceAttempt(userId, sectionId, sentenceId, audio),
+    }) => submitSpeakingSentenceAttempt(userId, sectionId, sentenceId, audio),
   })
 }
 

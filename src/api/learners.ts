@@ -36,7 +36,7 @@ import type {
   SectionAnswerResult,
   SectionHistoryEntry,
   SectionCard,
-  SentenceAttemptResult,
+  SpeakingSentenceAttemptResult,
   StartDictationSessionRequest,
   StartSectionRequest,
   SubmitSectionAnswerRequest,
@@ -729,15 +729,15 @@ export async function startSpeakingLibrarySection(
 // - submit a learner's recorded reading of one section sentence (multipart audio), scored via
 // ai-service's wav2vec2 GOP model; same FormData/multipart pattern as submitSpeakingAttempt above.
 // Does not itself affect topic gating - see finishSpeakingLibrarySection.
-export async function submitSentenceAttempt(
+export async function submitSpeakingSentenceAttempt(
   userId: string,
   sectionId: number,
   sentenceId: number,
   audio: Blob
-): Promise<SentenceAttemptResult> {
+): Promise<SpeakingSentenceAttemptResult> {
   const formData = new FormData()
   formData.append("audio", audio, "attempt.webm")
-  const { data } = await apiClient.post<ApiResponse<SentenceAttemptResult>>(
+  const { data } = await apiClient.post<ApiResponse<SpeakingSentenceAttemptResult>>(
     `/learners/${userId}/learn/speaking/library/sections/${sectionId}/sentences/${sentenceId}/attempts`,
     formData
   )

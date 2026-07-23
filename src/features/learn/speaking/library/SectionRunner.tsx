@@ -6,14 +6,14 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   useFinishSpeakingSection,
-  useSubmitSentenceAttempt,
+  useSubmitSpeakingSentenceAttempt,
 } from "@/features/learn/speaking/library/hooks"
 import { SpeakingRecorder } from "@/features/learn/speaking/SpeakingRecorder"
 import { ApiError } from "@/lib/http"
 import { cn } from "@/lib/utils"
 import type {
   FinishSpeakingSectionResult,
-  SentenceAttemptResult,
+  SpeakingSentenceAttemptResult,
   SpeakingLibrarySection,
 } from "@/types/api"
 
@@ -40,10 +40,10 @@ export function SectionRunner({ userId, section, onBackToTopics }: SectionRunner
   const { t } = useTranslation()
   const [index, setIndex] = useState(0)
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null)
-  const [results, setResults] = useState<Record<number, SentenceAttemptResult>>({})
+  const [results, setResults] = useState<Record<number, SpeakingSentenceAttemptResult>>({})
   const [finishResult, setFinishResult] = useState<FinishSpeakingSectionResult | null>(null)
 
-  const submitAttempt = useSubmitSentenceAttempt(userId)
+  const submitAttempt = useSubmitSpeakingSentenceAttempt(userId)
   const finishSection = useFinishSpeakingSection(userId)
 
   const sentence = section.sentences[index]
