@@ -1,5 +1,6 @@
 import { BookMarked, Wand2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { EmptyState } from "@/components/EmptyState"
 import { ErrorState } from "@/components/ErrorState"
@@ -10,18 +11,17 @@ import { Progress } from "@/components/ui/progress"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useStartVocabSection, useVocabLibraryTopics } from "@/features/learn/vocabulary/library/hooks"
 import { ApiError } from "@/lib/http"
-import type { SectionCard as SectionCardData } from "@/types/api"
 
 interface TopicLibraryPanelProps {
   userId: string
-  onSectionStarted: (card: SectionCardData) => void
 }
 
 // Lists every seeded topic as a card (name, word count, mastered %) and lets the learner start a
 // new Section on one - LLM top-up (if the topic is under-stocked) happens server-side inside
 // startSection, so this component only needs to show a loading state while that call is pending.
-export function TopicLibraryPanel({ userId, onSectionStarted }: TopicLibraryPanelProps) {
+export function TopicLibraryPanel({ userId }: TopicLibraryPanelProps) {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const { data: topics, isLoading, isError } = useVocabLibraryTopics(userId)
   const startSection = useStartVocabSection(userId)
 
@@ -29,7 +29,11 @@ export function TopicLibraryPanel({ userId, onSectionStarted }: TopicLibraryPane
     startSection.mutate(
       { topicId, request: {} },
       {
-        onSuccess: onSectionStarted,
+        // Starting a Section navigates to its own page rather than swapping tab content in
+        // place - the started card is handed over via router state since there's no
+        // GET-by-sectionId endpoint to refetch it from on a direct page load.
+        onSuccess: (card) =>
+          navigate(`/learn/vocabulary/section/${card.sectionId}`, { state: { card } }),
         onError: (error) =>
           toast.error(error instanceof ApiError ? error.message : t("learn.vocabulary.library.startError")),
       }

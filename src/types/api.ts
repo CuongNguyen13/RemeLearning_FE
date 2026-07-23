@@ -316,13 +316,18 @@ export interface GenerateAiPracticeRequest {
 
 export type VocabQuestionType = "CLOZE" | "MCQ" | "MATCHING"
 
-/** Public-facing question shape - never carries the answer, so the client can't cheat. */
+/** Practice-time question shape. Now carries the answer so the client can grade each answer
+ *  instantly (server still re-grades + does the AI/LLM pass on the final submit). */
 export interface VocabQuestion {
   index: number
   prompt: string
   type: VocabQuestionType
   /** null for CLOZE; the answer/distractor choices for MCQ/MATCHING. */
   options: string[] | null
+  /** The correct answer, for immediate client-side grading. */
+  answer: string
+  /** Optional VI translation/gloss shown alongside the correct answer. */
+  translation: string | null
 }
 
 export interface VocabPracticeItem {
@@ -417,6 +422,7 @@ export interface SectionCard {
   cardKind: SectionCardKind
   libraryWordId: number
   word: string | null
+  ipa: string | null
   meaningVi: string | null
   exampleEn: string | null
   audioUrl: string | null
@@ -456,13 +462,20 @@ export interface SectionHistoryEntry {
 
 export type GrammarQuestionType = "ERROR_CORRECTION" | "FILL_TENSE" | "TRANSFORM" | "MCQ"
 
-/** Public-facing question shape - never carries the answer, so the client can't cheat. */
+/** Practice-time question shape. Now carries the answer so the client can grade each answer
+ *  instantly (server still re-grades + does the AI/LLM pass on the final submit). */
 export interface GrammarQuestion {
   index: number
   prompt: string
   type: GrammarQuestionType
   /** null for ERROR_CORRECTION/FILL_TENSE/TRANSFORM; the choices for MCQ. */
   options: string[] | null
+  /** The correct answer, for immediate client-side grading. */
+  answer: string
+  /** Optional VI translation/gloss shown alongside the correct answer. */
+  translation: string | null
+  /** Plain VI translation of `answer`'s meaning (distinct from `translation`, a rule explanation). */
+  translationVi: string | null
 }
 
 export interface GrammarPracticeItem {
@@ -494,6 +507,8 @@ export interface GrammarAttemptQuestionResult {
   correctAnswer: string
   correct: boolean
   translation: string | null
+  /** Plain VI translation of `correctAnswer`'s meaning (distinct from `translation`, a rule explanation). */
+  translationVi: string | null
 }
 
 export interface GrammarAttemptResult {
@@ -522,17 +537,118 @@ export interface GrammarAttemptDetail {
   attemptedAt: string
 }
 
+// --- Grammar library: 60 fixed grammar topics, theory + AI illustration + practice/retry sessions ---
+
+export type GrammarLibraryTopicStatus = "LOCKED" | "UNLOCKED" | "IN_PROGRESS" | "PASSED"
+
+// Renamed from the design doc's bare "GrammarQuestionType" to avoid colliding with the practice-item
+// GrammarQuestionType above (different value set, different concept - AI practice item vs library
+// content question).
+export type GrammarLibraryQuestionType = "ERROR_CORRECTION" | "FILL_TENSE" | "TRANSFORM" | "MCQ"
+
+export type GrammarSessionType = "INITIAL" | "RETRY"
+
+export interface GrammarLibraryTopicSummary {
+  topicId: number
+  code: string
+  name: string
+  level: string | null
+  sequenceOrder: number
+  status: GrammarLibraryTopicStatus
+}
+
+export interface GrammarLibraryExample {
+  en: string
+  vi: string
+}
+
+/** Content-page question shape - includes the answer since these are shown read-only (not scored). */
+export interface GrammarLibraryQuestion {
+  questionId: number
+  type: GrammarLibraryQuestionType
+  prompt: string
+  options: string[] | null
+  answer: string
+  explanationVi: string | null
+  /** Plain VI translation of `answer`'s meaning (distinct from `explanationVi`, a rule explanation). */
+  translationVi: string | null
+}
+
+export interface GrammarLibraryContent {
+  topicId: number
+  code: string
+  name: string
+  explanationEn: string
+  explanationVi: string
+  illustrationText: string | null
+  examples: GrammarLibraryExample[]
+  questions: GrammarLibraryQuestion[]
+}
+
+/** Session-time question shape - answer withheld while the learner is answering it. */
+export interface GrammarSessionQuestion {
+  questionRef: string
+  type: GrammarLibraryQuestionType
+  prompt: string
+  options: string[] | null
+}
+
+export interface StartGrammarSessionResponse {
+  sessionId: number
+  sessionType: GrammarSessionType
+  questions: GrammarSessionQuestion[]
+}
+
+export interface SubmitGrammarAnswerRequest {
+  questionRef: string
+  submittedAnswer: string
+}
+
+export interface GrammarAnswerResult {
+  questionRef: string
+  correct: boolean
+  correctAnswer: string
+  explanationVi: string | null
+  /** Plain VI translation of `correctAnswer`'s meaning (distinct from `explanationVi`, a rule explanation). */
+  translationVi: string | null
+}
+
+export interface FinishGrammarSessionResponse {
+  sessionId: number
+  correctCount: number
+  totalCount: number
+  passed: boolean
+  /** Non-null only when `passed` is false — a fresh RETRY session covering the missed questions,
+   *  with its questions already inlined (no GET-by-sessionId endpoint exists). */
+  retrySession: StartGrammarSessionResponse | null
+  nextTopicUnlocked: boolean
+  nextTopicId: number | null
+}
+
+export interface GrammarSessionHistoryEntry {
+  sessionId: number
+  sessionType: GrammarSessionType
+  correctCount: number
+  totalCount: number
+  completedAt: string | null
+}
+
 // --- "Học & Luyện tập với AI" - listening skill ---
 
 export type ListeningQuestionType = "MCQ" | "KEYWORD" | "OPEN"
 
-/** Practice-time shape - never carries the transcript/answer (revealed only after grading). */
+/** Practice-time shape. MCQ/KEYWORD now carry the answer for instant client-side grading; OPEN
+ *  keeps answer = null (graded only by the server/AI pass on submit). */
 export interface ListeningQuestion {
   index: number
   prompt: string
   type: ListeningQuestionType
   /** Choices for MCQ; null for KEYWORD/OPEN. */
   options: string[] | null
+  /** The correct answer for MCQ/KEYWORD; null for OPEN (cannot be graded locally). */
+  answer: string | null
+  /** Optional explanation shown alongside the correct answer. */
+  explanation: string
 }
 
 export interface ListeningPracticeItem {

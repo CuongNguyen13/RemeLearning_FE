@@ -35,10 +35,17 @@ import type {
   StartSectionRequest,
   SubmitSectionAnswerRequest,
   GenerateSpeakingPracticeRequest,
+  GrammarAnswerResult,
+  GrammarLibraryContent,
+  GrammarLibraryTopicSummary,
+  GrammarSessionHistoryEntry,
+  FinishGrammarSessionResponse,
   SpeakingAttemptDetail,
   SpeakingAttemptHistoryEntry,
   SpeakingAttemptResult,
   SpeakingPracticeItem,
+  StartGrammarSessionResponse,
+  SubmitGrammarAnswerRequest,
   SubmitGrammarAttemptRequest,
   SubmitListeningAttemptRequest,
   SubmitVocabAttemptRequest,
@@ -422,6 +429,79 @@ export async function getGrammarAttemptDetail(
 ): Promise<GrammarAttemptDetail> {
   const { data } = await apiClient.get<ApiResponse<GrammarAttemptDetail>>(
     `/learners/${userId}/learn/grammar/history/${attemptId}`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/grammar/library/topics - the 60 fixed topics + this learner's
+// per-topic status (LOCKED/UNLOCKED/IN_PROGRESS/PASSED), ordered by sequenceOrder.
+export async function getGrammarLibraryTopics(userId: string): Promise<GrammarLibraryTopicSummary[]> {
+  const { data } = await apiClient.get<ApiResponse<GrammarLibraryTopicSummary[]>>(
+    `/learners/${userId}/learn/grammar/library/topics`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/grammar/library/topics/{topicId} - theory + illustration +
+// the topic's read-only sample questions (answers included, not scored here).
+export async function getGrammarLibraryTopicContent(
+  userId: string,
+  topicId: number
+): Promise<GrammarLibraryContent> {
+  const { data } = await apiClient.get<ApiResponse<GrammarLibraryContent>>(
+    `/learners/${userId}/learn/grammar/library/topics/${topicId}`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/grammar/library/topics/{topicId}/sessions - start an INITIAL
+// practice session for this topic (answers withheld until submitted).
+export async function startGrammarLibrarySession(
+  userId: string,
+  topicId: number
+): Promise<StartGrammarSessionResponse> {
+  const { data } = await apiClient.post<ApiResponse<StartGrammarSessionResponse>>(
+    `/learners/${userId}/learn/grammar/library/topics/${topicId}/sessions`,
+    {}
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/grammar/library/sessions/{sessionId}/answers - grade one
+// question of the running session.
+export async function submitGrammarLibraryAnswer(
+  userId: string,
+  sessionId: number,
+  request: SubmitGrammarAnswerRequest
+): Promise<GrammarAnswerResult> {
+  const { data } = await apiClient.post<ApiResponse<GrammarAnswerResult>>(
+    `/learners/${userId}/learn/grammar/library/sessions/${sessionId}/answers`,
+    request
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/grammar/library/sessions/{sessionId}/finish - close out the
+// session; if any answer was wrong a RETRY session is created server-side (nextRetrySessionId).
+export async function finishGrammarLibrarySession(
+  userId: string,
+  sessionId: number
+): Promise<FinishGrammarSessionResponse> {
+  const { data } = await apiClient.post<ApiResponse<FinishGrammarSessionResponse>>(
+    `/learners/${userId}/learn/grammar/library/sessions/${sessionId}/finish`,
+    {}
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/grammar/library/topics/{topicId}/history - past sessions for
+// this topic, newest first.
+export async function getGrammarLibraryHistory(
+  userId: string,
+  topicId: number
+): Promise<GrammarSessionHistoryEntry[]> {
+  const { data } = await apiClient.get<ApiResponse<GrammarSessionHistoryEntry[]>>(
+    `/learners/${userId}/learn/grammar/library/topics/${topicId}/history`
   )
   return unwrap(data)
 }

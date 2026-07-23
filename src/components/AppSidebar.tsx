@@ -1,4 +1,6 @@
 import {
+  BookMarked,
+  Ear,
   GraduationCap,
   Headphones,
   LayoutDashboard,
@@ -7,6 +9,7 @@ import {
   Mic,
   Repeat2,
   Sparkles,
+  SpellCheck,
   User,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
@@ -35,6 +38,15 @@ const PRIMARY_ITEMS: NavItem[] = [
 const PRACTICE_ITEMS: NavItem[] = [
   { to: "/practice", label: "nav.practice", icon: Repeat2 },
   { to: "/dictation", label: "nav.dictation", icon: Headphones },
+]
+
+// Learn & practice — the 4 AI-guided skill practice routes (vocabulary/grammar/listening/
+// speaking), each its own standalone page a recommendation or the sidebar can deep-link into.
+const LEARN_ITEMS: NavItem[] = [
+  { to: "/learn/vocabulary", label: "nav.learnVocabulary", icon: BookMarked },
+  { to: "/learn/grammar", label: "nav.learnGrammar", icon: SpellCheck },
+  { to: "/learn/listening", label: "nav.learnListening", icon: Ear },
+  { to: "/learn/speaking", label: "nav.learnSpeaking", icon: Mic },
 ]
 
 // Secondary items — learner identity and settings.
@@ -131,6 +143,20 @@ export function AppSidebar({ className, onNavigate }: AppSidebarProps) {
             {t("nav.groupPractice")}
           </p>
           {PRACTICE_ITEMS.map((item) => (
+            <NavItemLink key={item.to} {...item} onNavigate={onNavigate} />
+          ))}
+        </div>
+
+        {/* Separator between practice and learn sections. */}
+        <div className="my-3 mx-3 h-px bg-sidebar-border" role="separator" aria-orientation="horizontal" />
+
+        {/* Learn & practice section — the 4 AI-guided skill routes, entry points for both
+            direct browsing and a recommendation's "Practice now" deep-link. */}
+        <div className="flex flex-col gap-0.5">
+          <p className="mb-1 px-4 text-[0.65rem] font-bold uppercase tracking-wider text-sidebar-foreground/50">
+            {t("nav.groupLearn")}
+          </p>
+          {LEARN_ITEMS.map((item) => (
             <NavItemLink key={item.to} {...item} onNavigate={onNavigate} />
           ))}
         </div>

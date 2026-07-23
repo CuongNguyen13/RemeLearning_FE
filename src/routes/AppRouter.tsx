@@ -39,6 +39,41 @@ const DictationAiPracticePage = lazy(() =>
 const ProfilePage = lazy(() =>
   import("@/features/profile/ProfilePage").then((m) => ({ default: m.ProfilePage }))
 )
+const VocabularyLearnPage = lazy(() =>
+  import("@/features/learn/vocabulary/VocabularyLearnPage").then((m) => ({
+    default: m.VocabularyLearnPage,
+  }))
+)
+const VocabularySectionPage = lazy(() =>
+  import("@/features/learn/vocabulary/library/VocabularySectionPage").then((m) => ({
+    default: m.VocabularySectionPage,
+  }))
+)
+const GrammarLearnPage = lazy(() =>
+  import("@/features/learn/grammar/GrammarLearnPage").then((m) => ({
+    default: m.GrammarLearnPage,
+  }))
+)
+const GrammarTopicContentPage = lazy(() =>
+  import("@/features/learn/grammar/library/GrammarTopicContentPage").then((m) => ({
+    default: m.GrammarTopicContentPage,
+  }))
+)
+const GrammarLibrarySessionPage = lazy(() =>
+  import("@/features/learn/grammar/library/GrammarLibrarySessionPage").then((m) => ({
+    default: m.GrammarLibrarySessionPage,
+  }))
+)
+const ListeningLearnPage = lazy(() =>
+  import("@/features/learn/listening/ListeningLearnPage").then((m) => ({
+    default: m.ListeningLearnPage,
+  }))
+)
+const SpeakingLearnPage = lazy(() =>
+  import("@/features/learn/speaking/SpeakingLearnPage").then((m) => ({
+    default: m.SpeakingLearnPage,
+  }))
+)
 
 function RouteFallback() {
   const { t } = useTranslation()
@@ -68,6 +103,13 @@ const router = createBrowserRouter([
       { path: "/dictation", element: <DictationPage /> },
       { path: "/dictation/lesson/:clipId", element: <DictationLessonPage /> },
       { path: "/dictation/ai-practice/:practiceItemId", element: <DictationAiPracticePage /> },
+      { path: "/learn/vocabulary", element: <VocabularyLearnPage /> },
+      { path: "/learn/vocabulary/section/:sectionId", element: <VocabularySectionPage /> },
+      { path: "/learn/grammar", element: <GrammarLearnPage /> },
+      { path: "/learn/grammar/library/topics/:topicId", element: <GrammarTopicContentPage /> },
+      { path: "/learn/grammar/library/sessions/:sessionId", element: <GrammarLibrarySessionPage /> },
+      { path: "/learn/listening", element: <ListeningLearnPage /> },
+      { path: "/learn/speaking", element: <SpeakingLearnPage /> },
       { path: "/profile", element: <ProfilePage /> },
     ],
   },

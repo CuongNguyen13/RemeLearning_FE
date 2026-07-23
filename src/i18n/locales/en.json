@@ -299,7 +299,20 @@
       "correctAnswerIs": "Correct answer: {{answer}}",
       "noAnswer": "(no answer)",
       "noHistory": "No attempts yet - create a practice set to get started.",
+      "exerciseInstructions": {
+        "CLOZE": "Fill in the missing word:",
+        "MCQ": "Choose the correct word to complete the sentence:",
+        "MATCHING": "Choose the correct meaning of the word:"
+      },
       "library": {
+        "exerciseInstructions": {
+          "MCQ": "Choose the correct word to complete the sentence:",
+          "CLOZE": "Fill in the missing word:",
+          "MATCHING": "Choose the correct meaning of the word:",
+          "LISTENING_DICTATION": "Listen and type the word you hear:",
+          "TRANSLATE_EN_TO_VI": "Choose the correct Vietnamese meaning of the word:",
+          "TRANSLATE_VI_TO_EN": "Choose the English word for the meaning:"
+        },
         "emptyTitle": "No topics yet",
         "startError": "Could not start practice. Please try again.",
         "answerError": "Could not submit your answer. Please try again.",
@@ -327,8 +340,46 @@
       "submit": "Submit",
       "yourAnswerWas": "You answered: {{answer}}",
       "correctAnswerIs": "Correct answer: {{answer}}",
+      "translationIs": "Translation: {{translation}}",
       "noAnswer": "(no answer)",
-      "noHistory": "No attempts yet - create a practice set to get started."
+      "noHistory": "No attempts yet - create a practice set to get started.",
+      "exerciseInstructions": {
+        "ERROR_CORRECTION": "Find and correct the mistake in the sentence below:",
+        "FILL_TENSE": "Put the verb in brackets into the correct form:",
+        "TRANSFORM": "Rewrite the sentence as instructed:",
+        "MCQ": "Choose the correct answer to complete the sentence:"
+      },
+      "library": {
+        "emptyTitle": "No topics yet",
+        "topicsPassed": "{{passed}}/{{total}} topics passed",
+        "locked": "Locked",
+        "readTheory": "Read theory",
+        "startPractice": "Start practice",
+        "startError": "Could not start practice. Please try again.",
+        "answerError": "Could not submit your answer. Please try again.",
+        "typeAnswer": "Type your answer...",
+        "submit": "Submit",
+        "instructionsChoice": "Choose the correct answer below.",
+        "instructionsInput": "Type your answer in the box below, then press \"Submit\".",
+        "next": "Next",
+        "grading": "Grading...",
+        "retryToast": "You still have wrong answers - let's redo them",
+        "retryUnavailable": "Couldn't load the retry questions. Please go back to the topic and try again.",
+        "passedTitle": "Topic passed!",
+        "passedSubtitle": "You answered {{correct}}/{{total}} correctly.",
+        "nextUnlocked": "Next topic unlocked",
+        "backToTopics": "Back to topics",
+        "theory": "Theory",
+        "illustration": "Illustration",
+        "examples": "Examples",
+        "sampleQuestions": "Sample questions",
+        "status": {
+          "LOCKED": "Locked",
+          "UNLOCKED": "Not started",
+          "IN_PROGRESS": "In progress",
+          "PASSED": "Passed"
+        }
+      }
     },
     "listening": {
       "title": "Listening practice",
@@ -338,6 +389,11 @@
       "audioLabel": "Listen to the passage",
       "audioUnsupported": "Your browser does not support audio playback.",
       "question": "Question {{number}}",
+      "exerciseInstructions": {
+        "MCQ": "Listen to the audio, then choose the correct answer:",
+        "KEYWORD": "Listen and type the exact word/phrase you hear:",
+        "OPEN": "Listen to the audio, then answer the question below:"
+      },
       "keywordAnswer": "Type the word/phrase you heard",
       "openAnswer": "Your response",
       "submit": "Submit",
@@ -352,6 +408,7 @@
       "subtitle": "Read a Supertonic-voiced sentence aloud and get phoneme-level pronunciation feedback",
       "emptyTitle": "No practice sentence yet",
       "emptyDescription": "Create one and we'll target your own weak sounds, or let AI pick a level-appropriate sentence for you.",
+      "instruction": "Read the sentence below aloud and record yourself:",
       "sampleAudio": "Sample pronunciation",
       "startRecording": "Start recording",
       "stopRecording": "Stop recording",
@@ -380,6 +437,15 @@
       "retry": "Practice more",
       "advice": "Suggested advice",
       "submitError": "Failed to submit attempt"
+    },
+    "feedback": {
+      "gradedOnSubmit": "This response will be graded when you submit.",
+      "correct": "Correct",
+      "incorrect": "Incorrect",
+      "yourAnswerWas": "You answered: {{answer}}",
+      "correctAnswerIs": "Correct answer: {{answer}}",
+      "translationIs": "Translation: {{translation}}",
+      "noAnswer": "(no answer)"
     }
   },
   "profile": {

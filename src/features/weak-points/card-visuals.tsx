@@ -1,4 +1,4 @@
-import { AlertTriangle, AudioLines, BookOpen, CircleCheck, ClockFading, SpellCheck } from "lucide-react"
+import { AlertTriangle, AudioLines, BookOpen, CircleCheck, ClockFading, Ear, SpellCheck } from "lucide-react"
 import type { ComponentType, SVGProps } from "react"
 import type { Category } from "@/types/api"
 
@@ -21,10 +21,26 @@ const DOMAIN_VISUALS: Record<Category, DomainVisual> = {
   vocabulary: { icon: BookOpen, chipClassName: "bg-primary text-primary-foreground" },
   grammar: { icon: SpellCheck, chipClassName: "bg-secondary text-secondary-foreground" },
   pronunciation: { icon: AudioLines, chipClassName: "bg-foreground/10 text-foreground" },
+  listening: { icon: Ear, chipClassName: "bg-accent text-accent-foreground" },
 }
 
 export function getDomainVisual(category: Category): DomainVisual {
   return DOMAIN_VISUALS[category]
+}
+
+// Single source of truth for category -> "Learn & practice" route, per the Kafka
+// weak-point category table: pronunciation maps to /learn/speaking (not /learn/pronunciation),
+// every other category maps 1:1 to its own name. Shared by RecommendationCard's "Practice
+// now" deep-link and the dashboard's category-progress chart click-through.
+const CATEGORY_ROUTES: Record<Category, string> = {
+  vocabulary: "/learn/vocabulary",
+  grammar: "/learn/grammar",
+  pronunciation: "/learn/speaking",
+  listening: "/learn/listening",
+}
+
+export function getCategoryLearnRoute(category: Category): string {
+  return CATEGORY_ROUTES[category]
 }
 
 export type ForgettingBand = "low" | "medium" | "high"

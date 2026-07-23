@@ -1,8 +1,15 @@
-import { Sparkles } from "lucide-react"
+import { ArrowRight, Sparkles } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { useNavigate } from "react-router-dom"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { getBandTone, getDomainVisual, getForgettingBand } from "@/features/weak-points/card-visuals"
+import {
+  getBandTone,
+  getCategoryLearnRoute,
+  getDomainVisual,
+  getForgettingBand,
+} from "@/features/weak-points/card-visuals"
 import { formatRelativeTime } from "@/lib/format"
 import { cn } from "@/lib/utils"
 import type { Recommendation } from "@/types/api"
@@ -16,11 +23,21 @@ interface RecommendationCardProps {
 
 export function RecommendationCard({ recommendation, isPriority = false }: RecommendationCardProps) {
   const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
   const band = getForgettingBand(recommendation.forgettingScore)
   const tone = getBandTone(band)
   const domain = getDomainVisual(recommendation.category)
   const DomainIcon = domain.icon
   const BandIcon = tone.icon
+
+  // Deep-links to the matching /learn/<skill> route, carrying this recommendation's item
+  // so the practice page can open focused on it rather than a generic item list.
+  function handlePracticeNow() {
+    const route = getCategoryLearnRoute(recommendation.category)
+    navigate(
+      `${route}?focusItemId=${encodeURIComponent(recommendation.itemId)}&focusLabel=${encodeURIComponent(recommendation.label)}`
+    )
+  }
 
   return (
     <Card
@@ -86,6 +103,13 @@ export function RecommendationCard({ recommendation, isPriority = false }: Recom
             </ul>
           </div>
         )}
+
+        {/* Deep-links to the matching /learn/<skill> route with this item pre-focused - the
+            action-oriented next step after reading the recommendation above. */}
+        <Button variant="outline" size="sm" className="w-fit gap-1.5" onClick={handlePracticeNow}>
+          {t("recommendations.practiceNow")}
+          <ArrowRight className="size-3.5" aria-hidden="true" />
+        </Button>
       </CardContent>
     </Card>
   )
