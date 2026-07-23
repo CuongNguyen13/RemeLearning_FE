@@ -715,6 +715,63 @@ export interface ListeningAttemptDetail {
   attemptedAt: string
 }
 
+// --- Listening library: fixed topics -> one generated passage+audio Section with MCQ comprehension
+// questions each, gated by the same 4-state status the grammar library uses ---
+
+export type ListeningLibraryTopicStatus = "LOCKED" | "UNLOCKED" | "IN_PROGRESS" | "PASSED"
+
+export interface ListeningLibraryTopic {
+  id: number
+  name: string
+  level: string | null
+  status: ListeningLibraryTopicStatus
+}
+
+/** Learner-facing question shape - no correct option, so the answer isn't leaked before submit. */
+export interface ListeningLibraryQuestion {
+  questionId: number
+  questionText: string
+  options: string[]
+}
+
+export interface ListeningLibrarySection {
+  sectionId: number
+  passageText: string
+  /** Null if audio synthesis hasn't produced a clip for this section. */
+  audioUrl: string | null
+  questions: ListeningLibraryQuestion[]
+}
+
+export interface ListeningLibraryAnswerItem {
+  questionId: number
+  selectedOption: string
+}
+
+export interface SubmitListeningLibraryAnswersRequest {
+  answers: ListeningLibraryAnswerItem[]
+}
+
+/** Whole-section grading result - unlike grammar/vocab library's per-question grading, listening
+ *  library scores the entire submitted answer set in one call. */
+export interface ListeningLibraryAnswerResult {
+  score: number
+  correctCount: number
+  totalQuestions: number
+  topicPassed: boolean
+  nextTopicId: number | null
+  nextTopicUnlocked: boolean
+}
+
+export interface ListeningLibraryHistoryEntry {
+  id: number
+  sectionId: number
+  score: number | null
+  correctCount: number | null
+  totalQuestions: number | null
+  startedAt: string | null
+  completedAt: string | null
+}
+
 // --- "Học & Luyện tập với AI" - speaking/pronunciation skill ---
 
 export interface PhonemeScore {

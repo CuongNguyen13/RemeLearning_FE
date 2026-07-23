@@ -401,7 +401,28 @@
       "correctAnswerIs": "Correct answer: {{answer}}",
       "noAnswer": "(no answer)",
       "transcript": "Transcript",
-      "noHistory": "No attempts yet - create a practice item to get started."
+      "noHistory": "No attempts yet - create a practice item to get started.",
+      "library": {
+        "emptyTitle": "No topics yet",
+        "topicsPassed": "{{passed}}/{{total}} topics passed",
+        "locked": "Locked",
+        "startSection": "Start practice",
+        "startError": "Could not start practice. Please try again.",
+        "answerError": "Could not submit your answers. Please try again.",
+        "submit": "Submit",
+        "passageLabel": "Passage",
+        "passedTitle": "Topic passed!",
+        "notPassedTitle": "Not passed yet",
+        "scoreSubtitle": "You answered {{correct}}/{{total}} correctly.",
+        "nextUnlocked": "Next topic unlocked",
+        "backToTopics": "Back to topics",
+        "status": {
+          "LOCKED": "Locked",
+          "UNLOCKED": "Not started",
+          "IN_PROGRESS": "In progress",
+          "PASSED": "Passed"
+        }
+      }
     },
     "speaking": {
       "title": "Speaking practice",

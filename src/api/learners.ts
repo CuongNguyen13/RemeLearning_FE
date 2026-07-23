@@ -25,6 +25,10 @@ import type {
   ListeningAttemptDetail,
   ListeningAttemptHistoryEntry,
   ListeningAttemptResult,
+  ListeningLibraryAnswerResult,
+  ListeningLibraryHistoryEntry,
+  ListeningLibrarySection,
+  ListeningLibraryTopic,
   ListeningPracticeItem,
   PracticeRedoRequest,
   RecommendationsByCategory,
@@ -48,6 +52,7 @@ import type {
   SubmitGrammarAnswerRequest,
   SubmitGrammarAttemptRequest,
   SubmitListeningAttemptRequest,
+  SubmitListeningLibraryAnswersRequest,
   SubmitVocabAttemptRequest,
   VocabAttemptDetail,
   VocabAttemptHistoryEntry,
@@ -572,6 +577,51 @@ export async function getListeningAttemptDetail(
 // Absolute URL for one listening practice item's synthesized audio stream.
 export function listeningPracticeAudioUrl(userId: string, itemId: number): string {
   return `${apiBaseUrl}/learners/${userId}/learn/listening/items/${itemId}/audio`
+}
+
+// GET /api/v1/learners/{userId}/learn/listening/library/topics - the fixed topics + this learner's
+// per-topic status (LOCKED/UNLOCKED/IN_PROGRESS/PASSED).
+export async function getListeningLibraryTopics(userId: string): Promise<ListeningLibraryTopic[]> {
+  const { data } = await apiClient.get<ApiResponse<ListeningLibraryTopic[]>>(
+    `/learners/${userId}/learn/listening/library/topics`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/listening/library/topics/{topicId}/sections - start (or
+// resume) a Section for this topic (must be UNLOCKED or IN_PROGRESS).
+export async function startListeningLibrarySection(
+  userId: string,
+  topicId: number
+): Promise<ListeningLibrarySection> {
+  const { data } = await apiClient.post<ApiResponse<ListeningLibrarySection>>(
+    `/learners/${userId}/learn/listening/library/topics/${topicId}/sections`,
+    {}
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/listening/library/sections/{sectionId}/answers - score the
+// whole submitted answer set at once; passes the topic (and unlocks the next one) when all correct.
+export async function submitListeningLibraryAnswers(
+  userId: string,
+  sectionId: number,
+  request: SubmitListeningLibraryAnswersRequest
+): Promise<ListeningLibraryAnswerResult> {
+  const { data } = await apiClient.post<ApiResponse<ListeningLibraryAnswerResult>>(
+    `/learners/${userId}/learn/listening/library/sections/${sectionId}/answers`,
+    request
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/listening/library/sections/history - completed Section
+// attempts across all topics, newest first.
+export async function getListeningLibraryHistory(userId: string): Promise<ListeningLibraryHistoryEntry[]> {
+  const { data } = await apiClient.get<ApiResponse<ListeningLibraryHistoryEntry[]>>(
+    `/learners/${userId}/learn/listening/library/sections/history`
+  )
+  return unwrap(data)
 }
 
 // POST /api/v1/learners/{userId}/learn/speaking/generate - generate one AI speaking-practice

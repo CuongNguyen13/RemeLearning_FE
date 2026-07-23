@@ -17,6 +17,7 @@ import {
   useListeningPracticeHistory,
   useSubmitListeningAttempt,
 } from "@/features/learn/listening/hooks"
+import { TopicLibraryPanel } from "@/features/learn/listening/library/TopicLibraryPanel"
 import { ListeningPlayer } from "@/features/learn/listening/ListeningPlayer"
 import { ListeningQuestions } from "@/features/learn/listening/ListeningQuestions"
 import { ListeningResultPanel } from "@/features/learn/listening/ListeningResultPanel"
@@ -101,6 +102,7 @@ export function ListeningLearnPage() {
         <TabsList className="h-auto gap-1 rounded-full border border-border/60 bg-muted/50 p-1.5 backdrop-blur-xl">
           <TabsTrigger value="practice">{t("learn.tabs.practice")}</TabsTrigger>
           <TabsTrigger value="history">{t("learn.tabs.history")}</TabsTrigger>
+          <TabsTrigger value="library">{t("learn.tabs.library")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="practice" className="mt-6">
@@ -185,6 +187,10 @@ export function ListeningLearnPage() {
               ))}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="library" className="mt-6">
+          <TopicLibraryPanel userId={userId} />
         </TabsContent>
       </Tabs>
 
