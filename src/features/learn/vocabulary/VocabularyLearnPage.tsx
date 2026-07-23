@@ -20,10 +20,7 @@ import {
 import { SectionResultPanel } from "@/features/learn/vocabulary/library/SectionResultPanel"
 import { SectionRunner } from "@/features/learn/vocabulary/library/SectionRunner"
 import { TopicLibraryPanel } from "@/features/learn/vocabulary/library/TopicLibraryPanel"
-import {
-  useFinishVocabSection,
-  useSubmitVocabSectionAnswer,
-} from "@/features/learn/vocabulary/library/hooks"
+import { useSubmitVocabSectionAnswer } from "@/features/learn/vocabulary/library/hooks"
 import { VocabResultPanel } from "@/features/learn/vocabulary/VocabResultPanel"
 import { VocabRunner } from "@/features/learn/vocabulary/VocabRunner"
 import { ApiError } from "@/lib/http"
@@ -51,7 +48,6 @@ export function VocabularyLearnPage() {
   const [currentCard, setCurrentCard] = useState<SectionCard | null>(null)
   const [lastProgress, setLastProgress] = useState<SectionProgress | null>(null)
   const submitSectionAnswer = useSubmitVocabSectionAnswer(userId)
-  const finishSection = useFinishVocabSection(userId)
 
   const { data: history, isLoading: historyLoading, isError: historyError } =
     useVocabPracticeHistory(userId)
