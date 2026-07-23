@@ -438,7 +438,34 @@
       "submit": "Submit",
       "yourTranscript": "What you said",
       "weakPhonemes": "Weak sounds",
-      "noHistory": "No attempts yet - create a practice sentence to get started."
+      "noHistory": "No attempts yet - create a practice sentence to get started.",
+      "library": {
+        "emptyTitle": "No topics yet",
+        "topicsPassed": "{{passed}}/{{total}} topics passed",
+        "locked": "Locked",
+        "startSection": "Start practice",
+        "startError": "Could not start practice. Please try again.",
+        "submitError": "Could not submit your recording. Please try again.",
+        "finishError": "Could not finish this section. Please try again.",
+        "sentence": "Sentence {{number}}/{{total}}",
+        "phonemeScore": "Phoneme score",
+        "wordScore": "Word score",
+        "passed": "Passed",
+        "notPassed": "Not passed",
+        "next": "Next sentence",
+        "finish": "Finish section",
+        "passedTitle": "Topic passed!",
+        "notPassedTitle": "Not passed yet",
+        "scoreSubtitle": "You passed {{passed}}/{{total}} sentences.",
+        "nextUnlocked": "Next topic unlocked",
+        "backToTopics": "Back to topics",
+        "status": {
+          "LOCKED": "Locked",
+          "UNLOCKED": "Not started",
+          "IN_PROGRESS": "In progress",
+          "PASSED": "Passed"
+        }
+      }
     },
     "generateDialog": {
       "title": "Create practice",

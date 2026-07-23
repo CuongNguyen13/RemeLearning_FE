@@ -836,3 +836,59 @@ export interface SpeakingAttemptDetail {
   weakPhonemes: string[]
   attemptedAt: string
 }
+
+// --- Speaking library: fixed topics -> a Section of sample sentences, each read aloud and scored
+// one at a time (unlike listening's single passage+batch-submit, or vocab's card-by-card Section) ---
+
+export type SpeakingLibraryTopicStatus = "LOCKED" | "UNLOCKED" | "IN_PROGRESS" | "PASSED"
+
+export interface SpeakingLibraryTopic {
+  id: number
+  name: string
+  level: string | null
+  status: SpeakingLibraryTopicStatus
+}
+
+/** Learner-facing view of one sentence in the section: text, IPA and the fetchable sample-audio URL. */
+export interface SpeakingLibrarySentence {
+  sentenceId: number
+  sentenceText: string
+  ipa: string | null
+  /** Null if Supertonic hasn't finished synthesizing the sample audio yet. */
+  sampleAudioUrl: string | null
+}
+
+export interface SpeakingLibrarySection {
+  sectionId: number
+  sentences: SpeakingLibrarySentence[]
+}
+
+/** Scoring result for one recorded sentence attempt - unlike the non-library flow's
+ *  SpeakingAttemptResult, there's no per-word/phoneme breakdown, just this sentence's phoneme/word
+ *  scores and pass/fail. Does not itself affect topic gating (see FinishSpeakingSectionResult). */
+export interface SentenceAttemptResult {
+  sentenceId: number
+  phonemeScore: number
+  wordScore: number
+  passed: boolean
+  transcript: string
+}
+
+/** Result of finishing a section: whether every sentence passed, plus whether the topic was just
+ *  passed/unlocked the next one. */
+export interface FinishSpeakingSectionResult {
+  totalSentences: number
+  passedSentences: number
+  passed: boolean
+  nextTopicId: number | null
+  nextTopicUnlocked: boolean
+}
+
+export interface SpeakingLibraryHistoryEntry {
+  id: number
+  sectionId: number
+  sentenceId: number
+  phonemeScore: number | null
+  wordScore: number | null
+  createdAt: string
+}

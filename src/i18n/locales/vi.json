@@ -500,7 +500,34 @@
       "submit": "Nộp bài",
       "yourTranscript": "Bạn đã nói",
       "weakPhonemes": "Âm còn yếu",
-      "noHistory": "Chưa có lượt luyện nào - hãy tạo một câu luyện để bắt đầu."
+      "noHistory": "Chưa có lượt luyện nào - hãy tạo một câu luyện để bắt đầu.",
+      "library": {
+        "emptyTitle": "Chưa có chủ đề nào",
+        "topicsPassed": "Đã đạt {{passed}}/{{total}} chủ đề",
+        "locked": "Đã khoá",
+        "startSection": "Bắt đầu luyện tập",
+        "startError": "Không thể bắt đầu luyện tập. Vui lòng thử lại.",
+        "submitError": "Không thể gửi bài ghi âm. Vui lòng thử lại.",
+        "finishError": "Không thể hoàn thành phần luyện tập. Vui lòng thử lại.",
+        "sentence": "Câu {{number}}/{{total}}",
+        "phonemeScore": "Điểm âm vị",
+        "wordScore": "Điểm từ",
+        "passed": "Đạt",
+        "notPassed": "Chưa đạt",
+        "next": "Câu tiếp theo",
+        "finish": "Hoàn thành phần luyện tập",
+        "passedTitle": "Đã hoàn thành chủ đề!",
+        "notPassedTitle": "Chưa đạt yêu cầu",
+        "scoreSubtitle": "Bạn đã đạt {{passed}}/{{total}} câu.",
+        "nextUnlocked": "Đã mở khoá chủ đề tiếp theo",
+        "backToTopics": "Quay lại danh sách chủ đề",
+        "status": {
+          "LOCKED": "Đã khoá",
+          "UNLOCKED": "Chưa học",
+          "IN_PROGRESS": "Đang học",
+          "PASSED": "Đã đạt"
+        }
+      }
     },
     "generateDialog": {
       "title": "Tạo bài luyện",

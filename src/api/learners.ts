@@ -13,6 +13,7 @@ import type {
   DictationLessonSummary,
   DictationPracticeItem,
   DictationPracticeItemDetail,
+  FinishSpeakingSectionResult,
   GenerateAiPracticeRequest,
   GenerateGrammarPracticeRequest,
   GenerateVocabPracticeRequest,
@@ -35,6 +36,7 @@ import type {
   SectionAnswerResult,
   SectionHistoryEntry,
   SectionCard,
+  SentenceAttemptResult,
   StartDictationSessionRequest,
   StartSectionRequest,
   SubmitSectionAnswerRequest,
@@ -47,6 +49,9 @@ import type {
   SpeakingAttemptDetail,
   SpeakingAttemptHistoryEntry,
   SpeakingAttemptResult,
+  SpeakingLibraryHistoryEntry,
+  SpeakingLibrarySection,
+  SpeakingLibraryTopic,
   SpeakingPracticeItem,
   StartGrammarSessionResponse,
   SubmitGrammarAnswerRequest,
@@ -696,6 +701,69 @@ export async function getSpeakingAttemptDetail(
 // Absolute URL for one speaking practice item's Supertonic sample audio stream.
 export function speakingSampleAudioUrl(userId: string, itemId: number): string {
   return `${apiBaseUrl}/learners/${userId}/learn/speaking/items/${itemId}/sample-audio`
+}
+
+// GET /api/v1/learners/{userId}/learn/speaking/library/topics - the fixed topics + this learner's
+// per-topic status (LOCKED/UNLOCKED/IN_PROGRESS/PASSED).
+export async function getSpeakingLibraryTopics(userId: string): Promise<SpeakingLibraryTopic[]> {
+  const { data } = await apiClient.get<ApiResponse<SpeakingLibraryTopic[]>>(
+    `/learners/${userId}/learn/speaking/library/topics`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/speaking/library/topics/{topicId}/sections - start (or
+// resume) a Section for this topic (must be UNLOCKED or IN_PROGRESS).
+export async function startSpeakingLibrarySection(
+  userId: string,
+  topicId: number
+): Promise<SpeakingLibrarySection> {
+  const { data } = await apiClient.post<ApiResponse<SpeakingLibrarySection>>(
+    `/learners/${userId}/learn/speaking/library/topics/${topicId}/sections`,
+    {}
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/speaking/library/sections/{sectionId}/sentences/{sentenceId}/attempts
+// - submit a learner's recorded reading of one section sentence (multipart audio), scored via
+// ai-service's wav2vec2 GOP model; same FormData/multipart pattern as submitSpeakingAttempt above.
+// Does not itself affect topic gating - see finishSpeakingLibrarySection.
+export async function submitSentenceAttempt(
+  userId: string,
+  sectionId: number,
+  sentenceId: number,
+  audio: Blob
+): Promise<SentenceAttemptResult> {
+  const formData = new FormData()
+  formData.append("audio", audio, "attempt.webm")
+  const { data } = await apiClient.post<ApiResponse<SentenceAttemptResult>>(
+    `/learners/${userId}/learn/speaking/library/sections/${sectionId}/sentences/${sentenceId}/attempts`,
+    formData
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/speaking/library/sections/{sectionId}/finish - finish a
+// section: if every sentence has a passing attempt, marks the topic PASSED and unlocks the next one.
+export async function finishSpeakingLibrarySection(
+  userId: string,
+  sectionId: number
+): Promise<FinishSpeakingSectionResult> {
+  const { data } = await apiClient.post<ApiResponse<FinishSpeakingSectionResult>>(
+    `/learners/${userId}/learn/speaking/library/sections/${sectionId}/finish`,
+    {}
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/speaking/library/sections/history - scored sentence attempts
+// across all topics, newest first.
+export async function getSpeakingLibraryHistory(userId: string): Promise<SpeakingLibraryHistoryEntry[]> {
+  const { data } = await apiClient.get<ApiResponse<SpeakingLibraryHistoryEntry[]>>(
+    `/learners/${userId}/learn/speaking/library/sections/history`
+  )
+  return unwrap(data)
 }
 
 // Absolute URL for a library clip's audio stream, for use directly in an <audio src>.

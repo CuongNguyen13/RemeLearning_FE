@@ -18,6 +18,7 @@ import {
   useSpeakingPracticeHistory,
   useSubmitSpeakingAttempt,
 } from "@/features/learn/speaking/hooks"
+import { TopicLibraryPanel } from "@/features/learn/speaking/library/TopicLibraryPanel"
 import { SpeakingRecorder } from "@/features/learn/speaking/SpeakingRecorder"
 import { ApiError } from "@/lib/http"
 import { useAuthStore } from "@/stores/auth-store"
@@ -103,6 +104,7 @@ export function SpeakingLearnPage() {
         <TabsList className="h-auto gap-1 rounded-full border border-border/60 bg-muted/50 p-1.5 backdrop-blur-xl">
           <TabsTrigger value="practice">{t("learn.tabs.practice")}</TabsTrigger>
           <TabsTrigger value="history">{t("learn.tabs.history")}</TabsTrigger>
+          <TabsTrigger value="library">{t("learn.tabs.library")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="practice" className="mt-6">
@@ -216,6 +218,10 @@ export function SpeakingLearnPage() {
               ))}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="library" className="mt-6">
+          <TopicLibraryPanel userId={userId} />
         </TabsContent>
       </Tabs>
 
