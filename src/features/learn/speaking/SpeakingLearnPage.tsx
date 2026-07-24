@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { EmptyState } from "@/components/EmptyState"
 import { ErrorState } from "@/components/ErrorState"
+import { LoadingOverlay } from "@/components/common/LoadingOverlay"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -132,7 +133,8 @@ export function SpeakingLearnPage() {
           )}
 
           {view === "runner" && currentItem && (
-            <div className="flex flex-col gap-4">
+            <div className="relative flex flex-col gap-4">
+              <LoadingOverlay show={submit.isPending} label={t("common.grading")} />
               <div className="flex flex-wrap items-center gap-2">
                 {currentItem.topic && <Badge variant="secondary">{currentItem.topic}</Badge>}
                 {currentItem.level && <Badge variant="outline">{currentItem.level}</Badge>}

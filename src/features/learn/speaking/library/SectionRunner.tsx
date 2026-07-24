@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
+import { LoadingOverlay } from "@/components/common/LoadingOverlay"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -106,7 +107,8 @@ export function SectionRunner({ userId, section, onBackToTopics }: SectionRunner
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="relative flex flex-col gap-4">
+      <LoadingOverlay show={submitAttempt.isPending || finishSection.isPending} label={t("common.grading")} />
       <p className="text-sm font-medium text-muted-foreground">
         {t("learn.speaking.library.sentence", { number: index + 1, total: section.sentences.length })}
       </p>
