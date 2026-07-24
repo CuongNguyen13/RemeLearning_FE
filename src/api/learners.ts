@@ -27,6 +27,7 @@ import type {
   ListeningAttemptDetail,
   ListeningAttemptHistoryEntry,
   ListeningAttemptResult,
+  ListeningHistoryEntry,
   ListeningLibraryAnswerResult,
   ListeningLibraryHistoryEntry,
   ListeningLibrarySection,
@@ -659,6 +660,39 @@ export async function submitListeningLibraryAnswers(
 export async function getListeningLibraryHistory(userId: string): Promise<ListeningLibraryHistoryEntry[]> {
   const { data } = await apiClient.get<ApiResponse<ListeningLibraryHistoryEntry[]>>(
     `/learners/${userId}/learn/listening/library/sections/history`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/listening/history/{attemptId}/ai-practice - generate AI
+// practice targeted at one past learn attempt's mistakes.
+export async function generateListeningPracticeFromAttempt(
+  userId: string,
+  attemptId: number
+): Promise<ListeningPracticeItem[]> {
+  const { data } = await apiClient.post<ApiResponse<ListeningPracticeItem[]>>(
+    `/learners/${userId}/learn/listening/history/${attemptId}/ai-practice`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/listening/library/sections/{sectionId}/ai-practice - generate
+// AI practice targeted at one past library section's missed questions.
+export async function generateListeningPracticeFromSection(
+  userId: string,
+  sectionId: number
+): Promise<ListeningPracticeItem[]> {
+  const { data } = await apiClient.post<ApiResponse<ListeningPracticeItem[]>>(
+    `/learners/${userId}/learn/listening/library/sections/${sectionId}/ai-practice`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/listening/merged-history - learn attempts + library section
+// attempts combined into one time-sorted list, tagged by source.
+export async function getListeningMergedHistory(userId: string): Promise<ListeningHistoryEntry[]> {
+  const { data } = await apiClient.get<ApiResponse<ListeningHistoryEntry[]>>(
+    `/learners/${userId}/learn/listening/merged-history`
   )
   return unwrap(data)
 }

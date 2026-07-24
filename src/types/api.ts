@@ -726,6 +726,15 @@ export interface ListeningAttemptDetail {
   attemptedAt: string
 }
 
+// One row in the merged (learn + library) listening history list - tagged by source.
+export interface ListeningHistoryEntry {
+  source: "LEARN" | "LIBRARY"
+  attemptOrSessionId: number
+  completedAt: string | null
+  score: number | null
+  sectionId: number | null
+}
+
 // --- Listening library: fixed topics -> one generated passage+audio Section with MCQ comprehension
 // questions each, gated by the same 4-state status the grammar library uses ---
 
