@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
+import { LoadingOverlay } from "@/components/common/LoadingOverlay"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -77,7 +78,8 @@ export function GrammarSessionRunner({
         )}
       </p>
 
-      <Card>
+      <Card className="relative">
+        <LoadingOverlay show={isSubmitting} label={t("common.grading")} />
         <CardContent className="flex flex-col gap-3 py-6">
           {/* Per-type task requirement (what to do with the sentence), always in the app language -
               distinct from the generic "how to submit" line above. Guarantees every question shows a

@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import remarkGfm from "remark-gfm"
 import { toast } from "sonner"
 import { ErrorState } from "@/components/ErrorState"
+import { LoadingOverlay } from "@/components/common/LoadingOverlay"
 import { MermaidDiagram } from "@/components/MermaidDiagram"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -97,7 +98,8 @@ export function GrammarTopicContentPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="relative flex flex-col gap-6">
+      <LoadingOverlay show={startSession.isPending} label={t("common.generating")} />
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">{content.name}</h1>
         <Button variant="ghost" onClick={() => navigate("/learn/grammar")}>
