@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { EmptyState } from "@/components/EmptyState"
 import { ErrorState } from "@/components/ErrorState"
+import { LoadingOverlay } from "@/components/common/LoadingOverlay"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -62,8 +63,11 @@ export function TopicLibraryPanel({ userId }: TopicLibraryPanelProps) {
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {topics.map((topic) => {
         const masteryPercent = topic.wordCount === 0 ? 0 : Math.round((topic.masteredCount / topic.wordCount) * 100)
+        const isStartingThisTopic =
+          startSection.isPending && startSection.variables?.topicId === topic.topicId
         return (
-          <Card key={topic.topicId}>
+          <Card key={topic.topicId} className="relative">
+            <LoadingOverlay show={isStartingThisTopic} label={t("common.generating")} />
             <CardContent className="flex flex-col gap-3 py-5">
               <div className="flex items-center justify-between">
                 <span className="font-medium">{topic.name}</span>

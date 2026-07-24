@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
+import { LoadingOverlay } from "@/components/common/LoadingOverlay"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -58,7 +59,8 @@ export function SectionRunner({ userId, card, isSubmitting, onSubmit }: SectionR
         </span>
       </div>
 
-      <Card>
+      <Card className="relative">
+        <LoadingOverlay show={isSubmitting} label={t("common.grading")} />
         <CardContent className="flex flex-col gap-4 py-6">
           {card.cardKind === "INTRO" ? (
             <div className="flex flex-col gap-3">
