@@ -277,7 +277,6 @@
     "lessonAttemptCount": "Practiced {{count}}×",
     "sentenceCorrect": "Correct!",
     "sentenceIncorrect": "Not quite - fix it and check again",
-    "submitting": "Grading your attempt...",
     "submitError": "Couldn't grade this attempt",
     "goToAi": "Practice with AI",
     "historyRedo": "Redo"

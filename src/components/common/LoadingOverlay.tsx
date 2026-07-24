@@ -2,12 +2,14 @@ import { Loader2 } from "lucide-react"
 
 interface LoadingOverlayProps {
   show: boolean
-  label?: string
+  label: string
 }
 
 // Blocking overlay for an in-progress AI action (grading, generating).
 // Must be rendered inside a `relative`-positioned parent — it covers only
 // that parent, not the whole page, and swallows clicks via pointer-events.
+// `label` is required (not defaulted) so every call site goes through i18n
+// rather than falling back to a hardcoded, non-translated string.
 export function LoadingOverlay({ show, label }: LoadingOverlayProps) {
   if (!show) return null
 
@@ -19,7 +21,7 @@ export function LoadingOverlay({ show, label }: LoadingOverlayProps) {
       aria-busy="true"
     >
       <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      <p className="text-sm text-muted-foreground">{label ?? "Đang xử lý..."}</p>
+      <p className="text-sm text-muted-foreground">{label}</p>
     </div>
   )
 }

@@ -277,7 +277,6 @@
     "lessonAttemptCount": "Đã luyện {{count}} lần",
     "sentenceCorrect": "Chính xác!",
     "sentenceIncorrect": "Chưa đúng - sửa lại rồi kiểm tra lại nhé",
-    "submitting": "Đang chấm điểm bài làm...",
     "submitError": "Không thể chấm điểm bài làm này",
     "goToAi": "Luyện tập với AI",
     "historyRedo": "Làm lại"
