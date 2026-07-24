@@ -223,7 +223,7 @@ export function ListeningLearnPage() {
                           carries topicId (resolved server-side from sectionId) - "Làm lại" passes it
                           down to TopicLibraryPanel via component state, which auto-starts that exact
                           topic's Section on mount instead of just landing on the topic grid. */}
-                      {entry.source === "LIBRARY" && (
+                      {entry.source === "LIBRARY" && entry.topicId != null && (
                         <Button
                           variant="outline"
                           size="sm"
