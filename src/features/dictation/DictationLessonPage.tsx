@@ -1,8 +1,9 @@
-import { ChevronLeft, Loader2 } from "lucide-react"
+import { ChevronLeft } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useNavigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
+import { LoadingOverlay } from "@/components/common/LoadingOverlay"
 import { ErrorState } from "@/components/ErrorState"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -26,11 +27,6 @@ import type {
 // here so the runner owns the full viewport with no competing side rail.
 type PageView = "runner" | "submitting" | "result"
 
-interface PendingSubmission {
-  fullTranscript: string
-  mistakes: DictationSentenceMistake[]
-}
-
 export function DictationLessonPage() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
@@ -45,15 +41,15 @@ export function DictationLessonPage() {
 
   const [view, setView] = useState<PageView>("runner")
   const [result, setResult] = useState<DictationAttemptResult | null>(null)
-  const [pendingSubmission, setPendingSubmission] = useState<PendingSubmission | null>(null)
 
-  function submitPendingAttempt(submission: PendingSubmission) {
+  function handleRunnerComplete(fullTranscript: string, mistakes: DictationSentenceMistake[]) {
     if (clipId == null) return
+    setView("submitting")
     submitAttempt.mutate(
       {
         clipId,
-        userTranscript: submission.fullTranscript,
-        sentenceMistakes: submission.mistakes.length > 0 ? submission.mistakes : undefined,
+        userTranscript: fullTranscript,
+        sentenceMistakes: mistakes.length > 0 ? mistakes : undefined,
       },
       {
         onSuccess: (data) => {
@@ -64,13 +60,6 @@ export function DictationLessonPage() {
           toast.error(error instanceof ApiError ? error.message : t("dictation.checkError")),
       }
     )
-  }
-
-  function handleRunnerComplete(fullTranscript: string, mistakes: DictationSentenceMistake[]) {
-    const submission: PendingSubmission = { fullTranscript, mistakes }
-    setPendingSubmission(submission)
-    setView("submitting")
-    submitPendingAttempt(submission)
   }
 
   if (clipId == null || isNaN(clipId)) {
@@ -93,7 +82,7 @@ export function DictationLessonPage() {
         </Button>
       </div>
 
-      {view === "runner" && (
+      {view !== "result" && (
         <>
           {clipError && <ErrorState onRetry={() => void refetchClip()} />}
           {(clipLoading || !clip) && !clipError && (
@@ -108,38 +97,18 @@ export function DictationLessonPage() {
             </div>
           )}
           {clip && !clipLoading && (
-            <SentenceDictationRunner
-              key={clip.clipId}
-              clip={clip}
-              audioSrc={dictationClipAudioUrl(userId, clip.clipId)}
-              minListensForHint={facets?.minListensForHint ?? 1}
-              onComplete={handleRunnerComplete}
-            />
+            <div className="relative">
+              <SentenceDictationRunner
+                key={clip.clipId}
+                clip={clip}
+                audioSrc={dictationClipAudioUrl(userId, clip.clipId)}
+                minListensForHint={facets?.minListensForHint ?? 1}
+                onComplete={handleRunnerComplete}
+              />
+              <LoadingOverlay show={view === "submitting"} label={t("common.grading")} />
+            </div>
           )}
         </>
-      )}
-
-      {view === "submitting" && (
-        submitAttempt.isError ? (
-          <div className="flex w-full max-w-2xl flex-col items-center gap-4 rounded-2xl bg-card p-8 text-center shadow-clay">
-            <p className="font-medium text-destructive">{t("dictation.submitError")}</p>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => navigate("/dictation")}>
-                {t("dictation.result.backToLessons")}
-              </Button>
-              <Button
-                onClick={() => pendingSubmission && submitPendingAttempt(pendingSubmission)}
-              >
-                {t("common.retry")}
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div aria-busy="true" aria-live="polite" className="flex w-full max-w-2xl flex-col items-center gap-3 rounded-2xl bg-card p-8 text-center shadow-clay">
-            <Loader2 className="size-6 animate-spin text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">{t("dictation.submitting")}</p>
-          </div>
-        )
       )}
 
       {view === "result" && result && (

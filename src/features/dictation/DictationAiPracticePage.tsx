@@ -1,8 +1,9 @@
-import { ChevronLeft, Loader2 } from "lucide-react"
+import { ChevronLeft } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useNavigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
+import { LoadingOverlay } from "@/components/common/LoadingOverlay"
 import { ErrorState } from "@/components/ErrorState"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -27,11 +28,6 @@ import type {
 // (listen → type → check per sentence, hint after enough listens, Web Audio seek).
 type PageView = "runner" | "submitting" | "result"
 
-interface PendingSubmission {
-  fullTranscript: string
-  mistakes: DictationSentenceMistake[]
-}
-
 export function DictationAiPracticePage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -50,19 +46,19 @@ export function DictationAiPracticePage() {
 
   const [view, setView] = useState<PageView>("runner")
   const [result, setResult] = useState<DictationAttemptResult | null>(null)
-  const [pendingSubmission, setPendingSubmission] = useState<PendingSubmission | null>(null)
 
   function goToAiTab() {
     navigate("/dictation", { state: { tab: "ai" } })
   }
 
-  function submitPendingAttempt(submission: PendingSubmission) {
+  function handleRunnerComplete(fullTranscript: string, mistakes: DictationSentenceMistake[]) {
     if (practiceItemId == null) return
+    setView("submitting")
     submitAttempt.mutate(
       {
         practiceItemId,
-        userTranscript: submission.fullTranscript,
-        sentenceMistakes: submission.mistakes.length > 0 ? submission.mistakes : undefined,
+        userTranscript: fullTranscript,
+        sentenceMistakes: mistakes.length > 0 ? mistakes : undefined,
       },
       {
         onSuccess: (data) => {
@@ -73,13 +69,6 @@ export function DictationAiPracticePage() {
           toast.error(error instanceof ApiError ? error.message : t("dictation.checkError")),
       }
     )
-  }
-
-  function handleRunnerComplete(fullTranscript: string, mistakes: DictationSentenceMistake[]) {
-    const submission: PendingSubmission = { fullTranscript, mistakes }
-    setPendingSubmission(submission)
-    setView("submitting")
-    submitPendingAttempt(submission)
   }
 
   if (practiceItemId == null || isNaN(practiceItemId)) {
@@ -103,7 +92,7 @@ export function DictationAiPracticePage() {
         {item?.topic && <Badge variant="secondary">{item.topic}</Badge>}
       </div>
 
-      {view === "runner" && (
+      {view !== "result" && (
         <>
           {itemError && <ErrorState onRetry={() => void refetchItem()} />}
           {(itemLoading || !item) && !itemError && (
@@ -118,45 +107,25 @@ export function DictationAiPracticePage() {
             </div>
           )}
           {item && !itemLoading && (
-            <SentenceDictationRunner
-              key={item.practiceItemId}
-              clip={{
-                clipId: item.practiceItemId,
-                code: "",
-                title: t("dictation.aiBadge"),
-                audioUrl: item.audioUrl ?? "",
-                scriptText: item.scriptText,
-                sentences: item.sentences,
-              }}
-              audioSrc={dictationPracticeAudioUrl(userId, item.practiceItemId)}
-              minListensForHint={facets?.minListensForHint ?? 1}
-              onComplete={handleRunnerComplete}
-            />
+            <div className="relative">
+              <SentenceDictationRunner
+                key={item.practiceItemId}
+                clip={{
+                  clipId: item.practiceItemId,
+                  code: "",
+                  title: t("dictation.aiBadge"),
+                  audioUrl: item.audioUrl ?? "",
+                  scriptText: item.scriptText,
+                  sentences: item.sentences,
+                }}
+                audioSrc={dictationPracticeAudioUrl(userId, item.practiceItemId)}
+                minListensForHint={facets?.minListensForHint ?? 1}
+                onComplete={handleRunnerComplete}
+              />
+              <LoadingOverlay show={view === "submitting"} label={t("common.grading")} />
+            </div>
           )}
         </>
-      )}
-
-      {view === "submitting" && (
-        submitAttempt.isError ? (
-          <div className="flex w-full max-w-2xl flex-col items-center gap-4 rounded-2xl bg-card p-8 text-center shadow-clay">
-            <p className="font-medium text-destructive">{t("dictation.submitError")}</p>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={goToAiTab}>
-                {t("dictation.result.backToLessons")}
-              </Button>
-              <Button
-                onClick={() => pendingSubmission && submitPendingAttempt(pendingSubmission)}
-              >
-                {t("common.retry")}
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div aria-busy="true" aria-live="polite" className="flex w-full max-w-2xl flex-col items-center gap-3 rounded-2xl bg-card p-8 text-center shadow-clay">
-            <Loader2 className="size-6 animate-spin text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">{t("dictation.submitting")}</p>
-          </div>
-        )
       )}
 
       {view === "result" && result && (
