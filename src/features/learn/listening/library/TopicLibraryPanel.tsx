@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { EmptyState } from "@/components/EmptyState"
 import { ErrorState } from "@/components/ErrorState"
+import { LoadingOverlay } from "@/components/common/LoadingOverlay"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -87,8 +88,10 @@ export function TopicLibraryPanel({ userId }: TopicLibraryPanelProps) {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {topics.map((topic) => {
           const locked = topic.status === "LOCKED"
+          const isStartingThisTopic = startSection.isPending && startSection.variables === topic.id
           return (
-            <Card key={topic.id} className={cn(locked && "opacity-60")}>
+            <Card key={topic.id} className={cn("relative", locked && "opacity-60")}>
+              <LoadingOverlay show={isStartingThisTopic} label={t("common.generating")} />
               <CardContent className="flex flex-col gap-3 py-5">
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-medium">{topic.name}</span>

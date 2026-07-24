@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
+import { LoadingOverlay } from "@/components/common/LoadingOverlay"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -75,7 +76,8 @@ export function SectionRunner({ userId, section, onBackToTopics }: SectionRunner
   const allAnswered = section.questions.every((question) => !!answers[question.questionId])
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="relative flex flex-col gap-4">
+      <LoadingOverlay show={submitAnswers.isPending} label={t("common.grading")} />
       <Card>
         <CardContent className="flex flex-col gap-3 py-5">
           <p className="text-sm font-medium text-muted-foreground">{t("learn.listening.library.passageLabel")}</p>

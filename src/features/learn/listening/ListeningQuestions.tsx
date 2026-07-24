@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
+import { LoadingOverlay } from "@/components/common/LoadingOverlay"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Field, FieldLabel } from "@/components/ui/field"
@@ -35,7 +36,8 @@ export function ListeningQuestions({ item, onSubmit, isSubmitting = false }: Lis
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="relative flex flex-col gap-4">
+      <LoadingOverlay show={isSubmitting} label={t("common.grading")} />
       {item.questions.map((question) => (
         <Card key={question.index}>
           <CardContent className="flex flex-col gap-3">
