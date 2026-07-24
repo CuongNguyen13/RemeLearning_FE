@@ -537,6 +537,17 @@ export interface GrammarAttemptDetail {
   attemptedAt: string
 }
 
+// One row in the merged (learn + library) grammar history list - tagged by source so the FE can
+// render one time-sorted list with per-source retry actions ("Làm lại" only for LIBRARY rows,
+// "Luyện tập với AI" for both).
+export interface GrammarHistoryEntry {
+  source: "LEARN" | "LIBRARY"
+  attemptOrSessionId: number
+  completedAt: string | null
+  score: number | null
+  topicId: number | null
+}
+
 // --- Grammar library: 60 fixed grammar topics, theory + AI illustration + practice/retry sessions ---
 
 export type GrammarLibraryTopicStatus = "LOCKED" | "UNLOCKED" | "IN_PROGRESS" | "PASSED"

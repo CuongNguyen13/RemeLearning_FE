@@ -288,6 +288,11 @@
       "history": "Lịch sử",
       "library": "Thư viện"
     },
+    "history": {
+      "retryLibrary": "Làm lại",
+      "retryAi": "Luyện tập với AI",
+      "generateError": "Không thể tạo bài luyện AI"
+    },
     "vocabulary": {
       "title": "Luyện từ vựng",
       "subtitle": "Bài luyện điền từ/chọn đáp án/nối nghĩa do AI sinh, nhắm đúng các từ bạn còn yếu",

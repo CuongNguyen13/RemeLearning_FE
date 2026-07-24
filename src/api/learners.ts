@@ -20,6 +20,7 @@ import type {
   GrammarAttemptDetail,
   GrammarAttemptHistoryEntry,
   GrammarAttemptResult,
+  GrammarHistoryEntry,
   GrammarPracticeItem,
   GenerateListeningPracticeRequest,
   LearnerOverview,
@@ -512,6 +513,39 @@ export async function getGrammarLibraryHistory(
 ): Promise<GrammarSessionHistoryEntry[]> {
   const { data } = await apiClient.get<ApiResponse<GrammarSessionHistoryEntry[]>>(
     `/learners/${userId}/learn/grammar/library/topics/${topicId}/history`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/grammar/history/{attemptId}/ai-practice - generate AI practice
+// targeted at one past learn attempt's mistakes (the "Luyện tập với AI" history-row action).
+export async function generateGrammarPracticeFromAttempt(
+  userId: string,
+  attemptId: number
+): Promise<GrammarPracticeItem[]> {
+  const { data } = await apiClient.post<ApiResponse<GrammarPracticeItem[]>>(
+    `/learners/${userId}/learn/grammar/history/${attemptId}/ai-practice`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/grammar/library/sessions/{sessionId}/ai-practice - generate AI
+// practice targeted at one past library session's missed questions.
+export async function generateGrammarPracticeFromSession(
+  userId: string,
+  sessionId: number
+): Promise<GrammarPracticeItem[]> {
+  const { data } = await apiClient.post<ApiResponse<GrammarPracticeItem[]>>(
+    `/learners/${userId}/learn/grammar/library/sessions/${sessionId}/ai-practice`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/grammar/merged-history - learn attempts + library sessions
+// combined into one time-sorted list, tagged by source.
+export async function getGrammarMergedHistory(userId: string): Promise<GrammarHistoryEntry[]> {
+  const { data } = await apiClient.get<ApiResponse<GrammarHistoryEntry[]>>(
+    `/learners/${userId}/learn/grammar/merged-history`
   )
   return unwrap(data)
 }

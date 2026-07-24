@@ -288,6 +288,11 @@
       "history": "History",
       "library": "Library"
     },
+    "history": {
+      "retryLibrary": "Redo",
+      "retryAi": "Practice with AI",
+      "generateError": "Failed to generate AI practice"
+    },
     "vocabulary": {
       "title": "Vocabulary practice",
       "subtitle": "AI-generated cloze/multiple-choice/matching drills targeting your own weak words",
