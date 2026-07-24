@@ -1,6 +1,7 @@
 import { Wand2 } from "lucide-react"
 import { useState, type ReactNode } from "react"
 import { useTranslation } from "react-i18next"
+import { LoadingOverlay } from "@/components/common/LoadingOverlay"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -71,7 +72,8 @@ export function GenerateDialog({ trigger, onGenerate, isGenerating = false }: Ge
           <DialogTitle>{t("learn.generateDialog.title")}</DialogTitle>
         </DialogHeader>
 
-        <FieldGroup>
+        <FieldGroup className="relative">
+          <LoadingOverlay show={isGenerating} label={t("common.generating")} />
           <Field>
             <FieldLabel htmlFor="generate-dialog-level">{t("learn.generateDialog.levelLabel")}</FieldLabel>
             <Select
