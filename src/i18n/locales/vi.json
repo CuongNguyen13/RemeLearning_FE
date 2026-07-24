@@ -14,7 +14,9 @@
     "noData": "Chưa có dữ liệu",
     "logout": "Đăng xuất",
     "language": "Ngôn ngữ",
-    "skipToContent": "Bỏ qua để đến nội dung chính"
+    "skipToContent": "Bỏ qua để đến nội dung chính",
+    "grading": "Đang chấm điểm...",
+    "generating": "Đang tạo bài luyện tập..."
   },
   "categories": {
     "vocabulary": "Từ vựng",

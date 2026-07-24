@@ -14,7 +14,9 @@
     "noData": "Nothing here yet",
     "logout": "Log out",
     "language": "Language",
-    "skipToContent": "Skip to main content"
+    "skipToContent": "Skip to main content",
+    "grading": "Grading your answer...",
+    "generating": "Generating practice content..."
   },
   "categories": {
     "vocabulary": "Vocabulary",
