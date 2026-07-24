@@ -45,6 +45,10 @@ export function ListeningLearnPage() {
   const [currentItem, setCurrentItem] = useState<ListeningPracticeItem | null>(null)
   const [result, setResult] = useState<ListeningAttemptResult | null>(null)
   const [detailAttemptId, setDetailAttemptId] = useState<number | null>(null)
+  // "Làm lại" deep-link target for the library tab - set right before switching to "library" so
+  // TopicLibraryPanel can auto-start that exact topic's Section on mount, then cleared once
+  // consumed (see onInitialTopicHandled) so revisiting the tab later doesn't re-trigger it.
+  const [libraryDeepLinkTopicId, setLibraryDeepLinkTopicId] = useState<number | null>(null)
 
   const { data: history, isLoading: historyLoading, isError: historyError } =
     useListeningMergedHistory(userId)
@@ -215,14 +219,19 @@ export function ListeningLearnPage() {
 
                     <div className="flex gap-2">
                       {/* Listening's library Sections have no dedicated per-section route (unlike
-                          grammar's /library/topics/{topicId}) - the library tab lets the learner pick
-                          the topic themselves, so "Làm lại" here just reopens that tab. */}
+                          grammar's /library/topics/{topicId}), but the merged-history row now
+                          carries topicId (resolved server-side from sectionId) - "Làm lại" passes it
+                          down to TopicLibraryPanel via component state, which auto-starts that exact
+                          topic's Section on mount instead of just landing on the topic grid. */}
                       {entry.source === "LIBRARY" && (
                         <Button
                           variant="outline"
                           size="sm"
                           className="h-8 gap-1.5 text-xs"
-                          onClick={() => setTab("library")}
+                          onClick={() => {
+                            setLibraryDeepLinkTopicId(entry.topicId)
+                            setTab("library")
+                          }}
                         >
                           <RotateCcw className="size-3.5" />
                           {t("learn.history.retryLibrary")}
@@ -247,7 +256,11 @@ export function ListeningLearnPage() {
         </TabsContent>
 
         <TabsContent value="library" className="mt-6">
-          <TopicLibraryPanel userId={userId} />
+          <TopicLibraryPanel
+            userId={userId}
+            initialTopicId={libraryDeepLinkTopicId}
+            onInitialTopicHandled={() => setLibraryDeepLinkTopicId(null)}
+          />
         </TabsContent>
       </Tabs>
 

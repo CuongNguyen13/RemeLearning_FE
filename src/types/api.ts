@@ -733,6 +733,8 @@ export interface ListeningHistoryEntry {
   completedAt: string | null
   score: number | null
   sectionId: number | null
+  /** Only populated for LIBRARY rows (resolved server-side from sectionId) - the "Làm lại" deep-link target. */
+  topicId: number | null
 }
 
 // --- Listening library: fixed topics -> one generated passage+audio Section with MCQ comprehension
@@ -866,6 +868,8 @@ export interface SpeakingHistoryEntry {
   completedAt: string | null
   score: number | null
   sectionId: number | null
+  /** Only populated for LIBRARY rows (resolved server-side from sectionId) - the "Làm lại" deep-link target. */
+  topicId: number | null
 }
 
 // --- Speaking library: fixed topics -> a Section of sample sentences, each read aloud and scored

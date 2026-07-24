@@ -1,5 +1,5 @@
 import { Lock, Mic } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { EmptyState } from "@/components/EmptyState"
@@ -18,6 +18,14 @@ import type { SpeakingLibrarySection, SpeakingLibraryTopicStatus } from "@/types
 
 interface TopicLibraryPanelProps {
   userId: string
+  /**
+   * Deep-link target from the merged-history "Làm lại" button - the panel auto-starts this
+   * topic's Section once the topic list has loaded, provided it isn't LOCKED. Consumed exactly
+   * once: {@link onInitialTopicHandled} fires right after the attempt (success or not) so the
+   * caller can clear it and a later tab revisit doesn't re-trigger the auto-start.
+   */
+  initialTopicId?: number | null
+  onInitialTopicHandled?: () => void
 }
 
 function statusVariant(status: SpeakingLibraryTopicStatus): "default" | "secondary" | "outline" {
@@ -30,7 +38,7 @@ function statusVariant(status: SpeakingLibraryTopicStatus): "default" | "seconda
 // 4-state LOCKED/UNLOCKED/IN_PROGRESS/PASSED gating the listening/grammar libraries use. Starting a
 // Section returns the whole pool of sample sentences for that topic in one call, so a started
 // Section is just swapped in for the grid via local state rather than a route change.
-export function TopicLibraryPanel({ userId }: TopicLibraryPanelProps) {
+export function TopicLibraryPanel({ userId, initialTopicId, onInitialTopicHandled }: TopicLibraryPanelProps) {
   const { t } = useTranslation()
   const { data: topics, isLoading, isError } = useSpeakingLibraryTopics(userId)
   const startSection = useStartSpeakingLibrarySection(userId)
@@ -44,6 +52,23 @@ export function TopicLibraryPanel({ userId }: TopicLibraryPanelProps) {
         toast.error(error instanceof ApiError ? error.message : t("learn.speaking.library.startError")),
     })
   }
+
+  // Auto-starts the "Làm lại" deep-link target once the topic list has loaded, exactly once - a
+  // LOCKED topic (or one that no longer exists in the catalog) just falls through to the plain
+  // topic grid below instead of erroring, since the learner's progress may have changed since the
+  // history row was recorded. Guarded by a ref (not state) so this never re-fires on a later
+  // re-render even if the parent is slow to clear initialTopicId via onInitialTopicHandled.
+  const handledDeepLinkRef = useRef(false)
+  useEffect(() => {
+    if (handledDeepLinkRef.current || !topics || initialTopicId == null) return
+    handledDeepLinkRef.current = true
+    const target = topics.find((topic) => topic.id === initialTopicId)
+    if (target && target.status !== "LOCKED") {
+      handleStart(initialTopicId)
+    }
+    onInitialTopicHandled?.()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topics, initialTopicId])
 
   if (activeSection) {
     return (
