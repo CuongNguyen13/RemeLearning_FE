@@ -28,6 +28,11 @@ import type {
 // (listen → type → check per sentence, hint after enough listens, Web Audio seek).
 type PageView = "runner" | "submitting" | "result"
 
+interface PendingSubmission {
+  fullTranscript: string
+  mistakes: DictationSentenceMistake[]
+}
+
 export function DictationAiPracticePage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -46,29 +51,43 @@ export function DictationAiPracticePage() {
 
   const [view, setView] = useState<PageView>("runner")
   const [result, setResult] = useState<DictationAttemptResult | null>(null)
+  const [pendingSubmission, setPendingSubmission] = useState<PendingSubmission | null>(null)
 
   function goToAiTab() {
     navigate("/dictation", { state: { tab: "ai" } })
   }
 
-  function handleRunnerComplete(fullTranscript: string, mistakes: DictationSentenceMistake[]) {
+  // Submits (or resubmits, on retry) the learner's completed transcript. Kept separate from
+  // handleRunnerComplete so a failed attempt can be retried without re-running the runner - on
+  // failure the view drops back to "runner" (clearing the LoadingOverlay) instead of leaving the
+  // learner stuck on an infinite spinner with no way to recover.
+  function submitPendingAttempt(submission: PendingSubmission) {
     if (practiceItemId == null) return
     setView("submitting")
     submitAttempt.mutate(
       {
         practiceItemId,
-        userTranscript: fullTranscript,
-        sentenceMistakes: mistakes.length > 0 ? mistakes : undefined,
+        userTranscript: submission.fullTranscript,
+        sentenceMistakes: submission.mistakes.length > 0 ? submission.mistakes : undefined,
       },
       {
         onSuccess: (data) => {
           setResult(data)
           setView("result")
         },
-        onError: (error) =>
-          toast.error(error instanceof ApiError ? error.message : t("dictation.checkError")),
+        onError: (error) => {
+          toast.error(error instanceof ApiError ? error.message : t("dictation.checkError"))
+          setView("runner")
+        },
       }
     )
+  }
+
+  function handleRunnerComplete(fullTranscript: string, mistakes: DictationSentenceMistake[]) {
+    if (practiceItemId == null) return
+    const submission: PendingSubmission = { fullTranscript, mistakes }
+    setPendingSubmission(submission)
+    submitPendingAttempt(submission)
   }
 
   if (practiceItemId == null || isNaN(practiceItemId)) {
@@ -123,6 +142,23 @@ export function DictationAiPracticePage() {
                 onComplete={handleRunnerComplete}
               />
               <LoadingOverlay show={view === "submitting"} label={t("common.grading")} />
+              {/* The runner itself renders nothing once the learner has finished all sentences
+                  (see SentenceDictationRunner's `if (!currentSentence) return null`), so a failed
+                  submission needs its own recovery UI here rather than just hiding the overlay -
+                  otherwise there'd be nothing left on screen to retry from. */}
+              {view === "runner" && submitAttempt.isError && pendingSubmission && (
+                <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-4 rounded-md bg-background/90 p-6 text-center backdrop-blur-sm">
+                  <p className="font-medium text-destructive">{t("dictation.submitError")}</p>
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={goToAiTab}>
+                      {t("dictation.result.backToLessons")}
+                    </Button>
+                    <Button onClick={() => submitPendingAttempt(pendingSubmission)}>
+                      {t("common.retry")}
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </>
