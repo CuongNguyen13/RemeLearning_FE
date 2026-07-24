@@ -1,4 +1,4 @@
-import { Mic, Wand2 } from "lucide-react"
+import { Mic, RotateCcw, Wand2 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
@@ -16,7 +16,9 @@ import { PronunciationResultPanel } from "@/features/learn/speaking/Pronunciatio
 import { SpeakingAttemptDetailDialog } from "@/features/learn/speaking/SpeakingAttemptDetailDialog"
 import {
   useGenerateSpeakingPractice,
-  useSpeakingPracticeHistory,
+  useGenerateSpeakingPracticeFromAttempt,
+  useGenerateSpeakingPracticeFromSection,
+  useSpeakingMergedHistory,
   useSubmitSpeakingAttempt,
 } from "@/features/learn/speaking/hooks"
 import { TopicLibraryPanel } from "@/features/learn/speaking/library/TopicLibraryPanel"
@@ -35,7 +37,10 @@ export function SpeakingLearnPage() {
 
   const generate = useGenerateSpeakingPractice(userId)
   const submit = useSubmitSpeakingAttempt(userId)
+  const generateFromAttempt = useGenerateSpeakingPracticeFromAttempt(userId)
+  const generateFromSection = useGenerateSpeakingPracticeFromSection(userId)
 
+  const [tab, setTab] = useState("practice")
   const [view, setView] = useState<PracticeView>("idle")
   const [currentItem, setCurrentItem] = useState<SpeakingPracticeItem | null>(null)
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null)
@@ -43,7 +48,19 @@ export function SpeakingLearnPage() {
   const [detailAttemptId, setDetailAttemptId] = useState<number | null>(null)
 
   const { data: history, isLoading: historyLoading, isError: historyError } =
-    useSpeakingPracticeHistory(userId)
+    useSpeakingMergedHistory(userId)
+
+  // "Luyện tập với AI" from a merged-history row - dispatches to the learn or library
+  // generate-from-mistakes endpoint depending on the row's source, then switches to the
+  // "practice" tab (this domain has no separate "AI" tab the way dictation does).
+  function handlePracticeWithAi(entry: { source: "LEARN" | "LIBRARY"; attemptOrSessionId: number }) {
+    const mutation = entry.source === "LIBRARY" ? generateFromSection : generateFromAttempt
+    mutation.mutate(entry.attemptOrSessionId, {
+      onSuccess: () => setTab("practice"),
+      onError: (error) =>
+        toast.error(error instanceof ApiError ? error.message : t("learn.history.generateError")),
+    })
+  }
 
   function handleGenerate(focusItems?: string[]) {
     return (params: GenerateDialogParams) => {
@@ -101,7 +118,7 @@ export function SpeakingLearnPage() {
         <p className="text-sm text-muted-foreground">{t("learn.speaking.subtitle")}</p>
       </div>
 
-      <Tabs defaultValue="practice">
+      <Tabs value={tab} onValueChange={(next) => typeof next === "string" && setTab(next)}>
         <TabsList className="h-auto gap-1 rounded-full border border-border/60 bg-muted/50 p-1.5 backdrop-blur-xl">
           <TabsTrigger value="practice">{t("learn.tabs.practice")}</TabsTrigger>
           <TabsTrigger value="history">{t("learn.tabs.history")}</TabsTrigger>
@@ -200,24 +217,63 @@ export function SpeakingLearnPage() {
           )}
           {!historyLoading && history && history.length > 0 && (
             <div className="flex flex-col gap-2">
-              {history.map((entry) => (
-                <button
-                  key={entry.attemptId}
-                  type="button"
-                  onClick={() => setDetailAttemptId(entry.attemptId)}
-                  className="flex items-center justify-between rounded-2xl border border-border/60 bg-card px-4 py-3 text-left transition-colors hover:bg-muted/50"
-                >
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-medium">{entry.topic ?? t("learn.speaking.title")}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {[entry.level, entry.examType].filter(Boolean).join(" · ")}
-                    </span>
+              {history.map((entry) => {
+                const key = `${entry.source}-${entry.attemptOrSessionId}`
+                const scorePercent = entry.score != null ? Math.round(entry.score * 100) : null
+                const isGeneratingThis =
+                  (entry.source === "LIBRARY" ? generateFromSection : generateFromAttempt).isPending &&
+                  (entry.source === "LIBRARY" ? generateFromSection : generateFromAttempt).variables ===
+                    entry.attemptOrSessionId
+                return (
+                  <div
+                    key={key}
+                    className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <button
+                      type="button"
+                      onClick={() =>
+                        entry.source === "LEARN" && setDetailAttemptId(entry.attemptOrSessionId)
+                      }
+                      className="flex flex-1 items-center gap-3 text-left"
+                    >
+                      <Badge variant="secondary" className="shrink-0 text-[0.65rem]">
+                        {entry.source === "LIBRARY" ? t("learn.tabs.library") : t("learn.tabs.practice")}
+                      </Badge>
+                      {scorePercent != null && (
+                        <Badge variant={scorePercent >= 80 ? "default" : "secondary"}>
+                          {scorePercent}%
+                        </Badge>
+                      )}
+                    </button>
+
+                    <div className="flex gap-2">
+                      {/* Speaking's library Sections have no dedicated per-section route (same
+                          limitation as listening) - "Làm lại" reopens the inline library tab. */}
+                      {entry.source === "LIBRARY" && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 gap-1.5 text-xs"
+                          onClick={() => setTab("library")}
+                        >
+                          <RotateCcw className="size-3.5" />
+                          {t("learn.history.retryLibrary")}
+                        </Button>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 gap-1.5 text-xs"
+                        disabled={isGeneratingThis}
+                        onClick={() => handlePracticeWithAi(entry)}
+                      >
+                        <Wand2 className="size-3.5" />
+                        {t("learn.history.retryAi")}
+                      </Button>
+                    </div>
                   </div>
-                  <Badge variant={entry.overallScore >= 0.8 ? "default" : "secondary"}>
-                    {Math.round(entry.overallScore * 100)}%
-                  </Badge>
-                </button>
-              ))}
+                )
+              })}
             </div>
           )}
         </TabsContent>

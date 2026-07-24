@@ -857,6 +857,17 @@ export interface SpeakingAttemptDetail {
   attemptedAt: string
 }
 
+// One row in the merged (learn + library) speaking history list - tagged by source. Library rows
+// stay at one-per-scored-sentence-attempt granularity (speaking-library scores per-sentence, not
+// per-section like listening-library).
+export interface SpeakingHistoryEntry {
+  source: "LEARN" | "LIBRARY"
+  attemptOrSessionId: number
+  completedAt: string | null
+  score: number | null
+  sectionId: number | null
+}
+
 // --- Speaking library: fixed topics -> a Section of sample sentences, each read aloud and scored
 // one at a time (unlike listening's single passage+batch-submit, or vocab's card-by-card Section) ---
 

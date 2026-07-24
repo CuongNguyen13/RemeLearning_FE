@@ -51,6 +51,7 @@ import type {
   SpeakingAttemptDetail,
   SpeakingAttemptHistoryEntry,
   SpeakingAttemptResult,
+  SpeakingHistoryEntry,
   SpeakingLibraryHistoryEntry,
   SpeakingLibrarySection,
   SpeakingLibraryTopic,
@@ -830,6 +831,39 @@ export async function finishSpeakingLibrarySection(
 export async function getSpeakingLibraryHistory(userId: string): Promise<SpeakingLibraryHistoryEntry[]> {
   const { data } = await apiClient.get<ApiResponse<SpeakingLibraryHistoryEntry[]>>(
     `/learners/${userId}/learn/speaking/library/sections/history`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/speaking/history/{attemptId}/ai-practice - generate AI
+// practice targeted at one past learn attempt's mispronounced phonemes.
+export async function generateSpeakingPracticeFromAttempt(
+  userId: string,
+  attemptId: number
+): Promise<SpeakingPracticeItem[]> {
+  const { data } = await apiClient.post<ApiResponse<SpeakingPracticeItem[]>>(
+    `/learners/${userId}/learn/speaking/history/${attemptId}/ai-practice`
+  )
+  return unwrap(data)
+}
+
+// POST /api/v1/learners/{userId}/learn/speaking/library/sections/{sectionId}/ai-practice - generate
+// AI practice targeted at every sentence attempt's mispronunciations on one library section.
+export async function generateSpeakingPracticeFromSection(
+  userId: string,
+  sectionId: number
+): Promise<SpeakingPracticeItem[]> {
+  const { data } = await apiClient.post<ApiResponse<SpeakingPracticeItem[]>>(
+    `/learners/${userId}/learn/speaking/library/sections/${sectionId}/ai-practice`
+  )
+  return unwrap(data)
+}
+
+// GET /api/v1/learners/{userId}/learn/speaking/merged-history - learn attempts + library sentence
+// attempts combined into one time-sorted list, tagged by source.
+export async function getSpeakingMergedHistory(userId: string): Promise<SpeakingHistoryEntry[]> {
+  const { data } = await apiClient.get<ApiResponse<SpeakingHistoryEntry[]>>(
+    `/learners/${userId}/learn/speaking/merged-history`
   )
   return unwrap(data)
 }
