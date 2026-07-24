@@ -17,6 +17,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { EmptyState } from "@/components/EmptyState"
 import { ErrorState } from "@/components/ErrorState"
+import { LoadingOverlay } from "@/components/common/LoadingOverlay"
 import { RevealGroup, RevealItem } from "@/components/Reveal"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -672,7 +673,7 @@ function HistorySection({ userId, onSwitchTab }: { userId: string; onSwitchTab: 
                   opens the detail dialog; two action buttons let the learner jump
                   straight to re-practicing the same lesson (if it's a library clip)
                   or to the AI practice tab. */}
-              <div className="flex flex-col gap-3 rounded-2xl border border-white/40 bg-card/60 p-4 shadow-clay backdrop-blur-lg transition hover:border-white/70 hover:bg-card/75 hover:shadow-clay-warm">
+              <div className="relative flex flex-col gap-3 rounded-2xl border border-white/40 bg-card/60 p-4 shadow-clay backdrop-blur-lg transition hover:border-white/70 hover:bg-card/75 hover:shadow-clay-warm">
                 <button
                   type="button"
                   onClick={() => setSelectedAttemptId(entry.attemptId)}
@@ -751,6 +752,11 @@ function HistorySection({ userId, onSwitchTab }: { userId: string; onSwitchTab: 
                     </Button>
                   </div>
                 </div>
+
+                <LoadingOverlay
+                  show={generateFromAttempt.isPending && generateFromAttempt.variables?.attemptId === entry.attemptId}
+                  label={t("common.generating")}
+                />
               </div>
             </RevealItem>
           )

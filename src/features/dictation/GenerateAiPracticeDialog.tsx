@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { LoadingOverlay } from "@/components/common/LoadingOverlay"
 import { useDictationFacets, useGenerateAiPractice } from "@/features/dictation/hooks"
 import { ApiError } from "@/lib/http"
 
@@ -73,51 +74,55 @@ export function GenerateAiPracticeDialog({ userId, trigger }: GenerateAiPractice
           <DialogTitle>{t("dictation.aiGenerateDialog.title")}</DialogTitle>
         </DialogHeader>
 
-        <FieldGroup>
-          <Field>
-            <FieldLabel htmlFor="ai-practice-level">{t("dictation.aiGenerateDialog.levelLabel")}</FieldLabel>
-            <Select
-              value={level}
-              onValueChange={(value) => setLevel(value ?? NONE)}
-              disabled={generate.isPending}
-            >
-              <SelectTrigger id="ai-practice-level" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={NONE}>{t("dictation.aiGenerateDialog.noPreference")}</SelectItem>
-                <SelectItem value={RANDOM}>{t("dictation.aiGenerateDialog.random")}</SelectItem>
-                {LEVELS.map((lvl) => (
-                  <SelectItem key={lvl} value={lvl}>
-                    {lvl}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
+        <div className="relative">
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="ai-practice-level">{t("dictation.aiGenerateDialog.levelLabel")}</FieldLabel>
+              <Select
+                value={level}
+                onValueChange={(value) => setLevel(value ?? NONE)}
+                disabled={generate.isPending}
+              >
+                <SelectTrigger id="ai-practice-level" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NONE}>{t("dictation.aiGenerateDialog.noPreference")}</SelectItem>
+                  <SelectItem value={RANDOM}>{t("dictation.aiGenerateDialog.random")}</SelectItem>
+                  {LEVELS.map((lvl) => (
+                    <SelectItem key={lvl} value={lvl}>
+                      {lvl}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
 
-          <Field>
-            <FieldLabel htmlFor="ai-practice-exam-type">{t("dictation.aiGenerateDialog.examTypeLabel")}</FieldLabel>
-            <Select
-              value={examType}
-              onValueChange={(value) => setExamType(value ?? NONE)}
-              disabled={generate.isPending}
-            >
-              <SelectTrigger id="ai-practice-exam-type" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={NONE}>{t("dictation.aiGenerateDialog.noPreference")}</SelectItem>
-                <SelectItem value={RANDOM}>{t("dictation.aiGenerateDialog.random")}</SelectItem>
-                {(facets?.examTypes ?? []).map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-        </FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="ai-practice-exam-type">{t("dictation.aiGenerateDialog.examTypeLabel")}</FieldLabel>
+              <Select
+                value={examType}
+                onValueChange={(value) => setExamType(value ?? NONE)}
+                disabled={generate.isPending}
+              >
+                <SelectTrigger id="ai-practice-exam-type" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NONE}>{t("dictation.aiGenerateDialog.noPreference")}</SelectItem>
+                  <SelectItem value={RANDOM}>{t("dictation.aiGenerateDialog.random")}</SelectItem>
+                  {(facets?.examTypes ?? []).map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+          </FieldGroup>
+
+          <LoadingOverlay show={generate.isPending} label={t("common.generating")} />
+        </div>
 
         <DialogFooter>
           <DialogClose render={<Button type="button" variant="outline" disabled={generate.isPending} />}>
